@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#070b14">
+    <meta name="description" content="ARROW ESCAPE - لعبة ألغاز مسارات الأسهم النيونية الرائعة للأندرويد">
+    <title>ARROW ESCAPE - أندرويد فقط</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Orbitron:wght@600;800;900&display=swap">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Outfit:wght@400;600;700;800;900&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+    </noscript>
+
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="apple-touch-icon" href="assets/logo.png">
+    <link rel="stylesheet" href="css/main.css?v=48.0">
+    <link rel="stylesheet" href="css/game.css?v=48.0">
+    <link rel="stylesheet" href="css/screens.css?v=48.0">
+</head>
+<body class="lang-ar">
+
+    <!-- Ambient Cyberpunk Background -->
+    <div class="cyber-bg"></div>
+
+    <!-- Main Viewport (Centers phone on desktop or fills 100% on mobile) -->
+    <div id="app-viewport">
+        <div id="android-device-wrapper">
+
+
+            <!-- Screen Container -->
+            <div class="screen-container">
+
+                <!-- ==========================================
+                     SCREEN 1: MAIN MENU
+                     ========================================== -->
+                <div id="screen-menu" class="app-screen active">
+                    <!-- Top stats header -->
+                    <div class="menu-top-stats">
+                        <div class="stat-pill coins">
+                            <span>🪙</span>
+                            <span class="user-coins-display">200</span>
+                        </div>
+                        <div class="stat-pill stars">
+                            <span>⭐</span>
+                            <span class="user-stars-display">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Logo and Brand Hero -->
+                    <div class="menu-logo-area">
+                        <!-- In-Game Authentic Animated Neon Arrows Logo (Up, Left, Right) -->
+                        <svg class="menu-hero-logo" viewBox="0 0 140 105" aria-hidden="true">
+                            <defs>
+                                <filter id="menu-glow-cyan" x="-30%" y="-30%" width="160%" height="160%">
+                                    <feGaussianBlur stdDeviation="5" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                                <filter id="menu-glow-orange" x="-30%" y="-30%" width="160%" height="160%">
+                                    <feGaussianBlur stdDeviation="5" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                            </defs>
+
+                            <!-- Authentic Puzzle Matrix Grid Dots -->
+                            <g class="matrix-dots-layer">
+                                <circle cx="35" cy="40" r="2.2" fill="var(--neon-cyan)" opacity="0.4" />
+                                <circle cx="70" cy="40" r="2.2" fill="var(--neon-cyan)" opacity="0.4" />
+                                <circle cx="105" cy="40" r="2.2" fill="var(--neon-cyan)" opacity="0.4" />
+                                <circle cx="35" cy="75" r="2.2" fill="var(--neon-cyan)" opacity="0.4" />
+                                <circle cx="70" cy="75" r="2.2" fill="var(--neon-cyan)" opacity="0.4" />
+                                <circle cx="105" cy="75" r="2.2" fill="var(--neon-cyan)" opacity="0.4" />
+                            </g>
+
+                            <!-- In-Game Arrow UP (فوق) - Neon Cyan Classic Arrow -->
+                            <g class="logo-arrow-up maze-arrow-entity arrow-cyan">
+                                <path class="arrow-track-line arrow-aura" d="M 70 75 L 70 28" fill="none" stroke="var(--neon-cyan)" stroke-width="15" stroke-linecap="round" filter="url(#menu-glow-cyan)" opacity="0.5" />
+                                <path class="arrow-track-line arrow-body" d="M 70 75 L 70 28" fill="none" stroke="var(--neon-cyan)" stroke-width="8" stroke-linecap="round" />
+                                <path class="arrow-track-line arrow-core" d="M 70 75 L 70 28" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" />
+                                <g class="arrowhead-mesh" data-skin="classic" transform="translate(70, 28) rotate(0)">
+                                    <polygon points="0,-22 13,5 -13,5" fill="var(--neon-cyan)" filter="url(#menu-glow-cyan)" opacity="0.85" />
+                                    <polygon points="0,-20 11.5,4.4 -11.5,4.4" fill="var(--neon-cyan)" />
+                                    <polygon points="0,-14.3 6.2,2.5 -6.2,2.5" fill="#ffffff" opacity="0.95" />
+                                </g>
+                            </g>
+
+                            <!-- In-Game Arrow LEFT (يسار) - Neon Orange Classic Arrow -->
+                            <g class="logo-arrow-left maze-arrow-entity arrow-orange">
+                                <path class="arrow-track-line arrow-aura" d="M 70 75 L 28 75" fill="none" stroke="var(--neon-orange)" stroke-width="15" stroke-linecap="round" filter="url(#menu-glow-orange)" opacity="0.5" />
+                                <path class="arrow-track-line arrow-body" d="M 70 75 L 28 75" fill="none" stroke="var(--neon-orange)" stroke-width="8" stroke-linecap="round" />
+                                <path class="arrow-track-line arrow-core" d="M 70 75 L 28 75" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" />
+                                <g class="arrowhead-mesh" data-skin="classic" transform="translate(28, 75) rotate(270)">
+                                    <polygon points="0,-22 13,5 -13,5" fill="var(--neon-orange)" filter="url(#menu-glow-orange)" opacity="0.85" />
+                                    <polygon points="0,-20 11.5,4.4 -11.5,4.4" fill="var(--neon-orange)" />
+                                    <polygon points="0,-14.3 6.2,2.5 -6.2,2.5" fill="#ffffff" opacity="0.95" />
+                                </g>
+                            </g>
+
+                            <!-- In-Game Arrow RIGHT (يمين) - Neon Orange Classic Arrow -->
+                            <g class="logo-arrow-right maze-arrow-entity arrow-orange">
+                                <path class="arrow-track-line arrow-aura" d="M 70 75 L 112 75" fill="none" stroke="var(--neon-orange)" stroke-width="15" stroke-linecap="round" filter="url(#menu-glow-orange)" opacity="0.5" />
+                                <path class="arrow-track-line arrow-body" d="M 70 75 L 112 75" fill="none" stroke="var(--neon-orange)" stroke-width="8" stroke-linecap="round" />
+                                <path class="arrow-track-line arrow-core" d="M 70 75 L 112 75" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" />
+                                <g class="arrowhead-mesh" data-skin="classic" transform="translate(112, 75) rotate(90)">
+                                    <polygon points="0,-22 13,5 -13,5" fill="var(--neon-orange)" filter="url(#menu-glow-orange)" opacity="0.85" />
+                                    <polygon points="0,-20 11.5,4.4 -11.5,4.4" fill="var(--neon-orange)" />
+                                    <polygon points="0,-14.3 6.2,2.5 -6.2,2.5" fill="#ffffff" opacity="0.95" />
+                                </g>
+                            </g>
+
+                            <!-- Center Anchor Intersection Node -->
+                            <circle cx="70" cy="75" r="4.5" fill="#ffffff" opacity="0.9" />
+                        </svg>
+
+                        <h1 class="menu-game-title">ARROW ESCAPE</h1>
+                        <p class="menu-game-tagline" data-i18n="appTagline">فكر .. خطط .. اهرب</p>
+                    </div>
+
+                    <!-- Navigation Action Buttons -->
+                    <div class="menu-buttons-list">
+                        <!-- Play Button -->
+                        <button id="btn-menu-play" class="btn-primary-play">
+                            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            <span id="menu-play-text" data-i18n="play">بدء اللعب</span>
+                        </button>
+
+                        <!-- Challenges Button (تحديات - قريباً) -->
+                        <button id="btn-menu-challenge" class="btn-challenges-play">
+                            <span class="btn-icon">🔒</span>
+                            <span id="menu-challenges-text" data-i18n="challenges">تحديات (قريباً)</span>
+                        </button>
+
+                        <div class="menu-grid-actions">
+                            <!-- Levels Select -->
+                            <button id="btn-menu-levels" class="menu-secondary-btn">
+                                <span>🗺️</span>
+                                <span data-i18n="levels">المستويات</span>
+                            </button>
+
+                            <!-- Themes Store -->
+                            <button id="btn-menu-themes" class="menu-secondary-btn">
+                                <span>🎨</span>
+                                <span data-i18n="themes">المظاهر</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Footer Circle Buttons: Lucky Wheel, Profile, Missions, Achievements & Settings -->
+                    <div class="menu-footer-actions">
+                        <button id="btn-menu-wheel" class="menu-circle-btn" title="عجلة الحظ اليومية">
+                            <span>🎡</span>
+                        </button>
+                        <button id="btn-menu-profile" class="menu-circle-btn" title="ملف اللاعب ومقياس الذكاء">
+                            <span>🧠</span>
+                        </button>
+                        <button id="btn-menu-missions" class="menu-circle-btn" title="مهام اليوم">
+                            <span>📜</span>
+                            <span id="missions-badge" class="menu-btn-badge" style="display: none;">!</span>
+                        </button>
+                        <button id="btn-menu-achievements" class="menu-circle-btn" title="الإنجازات">
+                            <span>🏆</span>
+                            <span id="achievements-badge" class="menu-btn-badge" style="display: none;">0</span>
+                        </button>
+                        <button id="btn-menu-settings" class="menu-circle-btn" title="الإعدادات">
+                            <span>⚙️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                     SCREEN 2: GAMEPLAY SCREEN
+                     ========================================== -->
+                <div id="screen-game" class="app-screen">
+
+                    <!-- TOP HUD (Matching Reference Image) -->
+                    <div class="gameplay-hud-top">
+                        <!-- Navigation & Actions Row: Equal Horizontal Line -->
+                        <div class="hud-header-row">
+                            <button id="btn-gameplay-back" class="hud-icon-btn btn-back-to-menu" title="Back">
+                                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                            </button>
+
+                            <!-- Level Info Tag Raised Directly in Header Row -->
+                            <div class="hud-level-tag">
+                                <span data-i18n="level">المستوى</span> <span id="hud-level-number">1</span>
+                            </div>
+
+                            <div class="hud-top-actions">
+                                <div id="hud-timer-badge" class="hud-timer-badge" style="display: none;">
+                                    <span class="hud-timer-icon">⏱️</span>
+                                    <span id="hud-timer">00:00</span>
+                                </div>
+                                <button id="btn-gameplay-settings" class="hud-icon-btn" title="Settings">
+                                    <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                                </button>
+                                <button id="btn-gameplay-pause" class="hud-icon-btn" title="Pause">
+                                    <svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Level Info Row: World Badge on one side, 3 Stars aligned under Settings & Pause on the other -->
+                        <div class="hud-badges-row">
+                            <div class="hud-world-info-group">
+                                <span id="hud-world-badge" class="hud-world-badge">🔷 عالم النيون السيبراني</span>
+                                <span id="hud-difficulty-badge" class="hud-difficulty-badge">🟢 متدرب</span>
+                            </div>
+
+                            <!-- 3 Stars aligned directly under Settings and Pause buttons -->
+                            <div class="hud-stars-group">
+                                <span id="hud-star-1" class="hud-star active" title="نجمة 1">★</span>
+                                <span id="hud-star-2" class="hud-star active" title="نجمة 2">★</span>
+                                <span id="hud-star-3" class="hud-star active" title="نجمة 3">★</span>
+                            </div>
+                        </div>
+
+                        <!-- Boss Level Alert Banner (Shown only on boss levels) -->
+                        <div id="hud-boss-banner" class="hud-boss-banner" style="display: none;">
+                            <span>👑</span> <span>مرحلة الزعيم الملكي! (+25 🪙 مكافأة)</span> <span>🔥</span>
+                        </div>
+                    </div>
+
+                    <!-- CENTER: PUZZLE GRID (Multi-segment Arrow Maze) -->
+                    <div class="puzzle-board-container">
+                        <div class="puzzle-board-wrapper">
+                            <div id="combo-display-overlay" class="combo-display-overlay"></div>
+                            <div id="puzzle-grid" class="puzzle-grid size-6 arrow-maze-board">
+                                <!-- Multi-segment arrows and matrix dots rendered dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BOTTOM CONTROLS: HINT, UNDO, RESET -->
+                    <!-- CRITICAL: NEVER A NEXT BUTTON ON GAMEPLAY SCREEN! -->
+                    <div class="gameplay-bottom-controls">
+                        <!-- HINT -->
+                        <button id="btn-action-hint" class="game-action-btn">
+                            <span id="btn-hint-badge" class="action-badge">1</span>
+                            <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
+                            <span class="action-btn-label" data-i18n="hint">تلميح</span>
+                        </button>
+
+                        <!-- LASER ZAP BOOSTER -->
+                        <button id="btn-action-laser" class="game-action-btn laser-booster-btn">
+                            <span id="btn-laser-badge" class="action-badge">1</span>
+                            <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+                            <span class="action-btn-label">ليزر صاعق</span>
+                        </button>
+
+                        <!-- X-RAY VISION BOOSTER -->
+                        <button id="btn-action-xray" class="game-action-btn xray-booster-btn" title="عين الصقر الكاشفة (X-Ray)">
+                            <span id="btn-xray-badge" class="action-badge">1</span>
+                            <span style="font-size: 1.35rem; line-height: 1;">👁️</span>
+                            <span class="action-btn-label">عين الصقر</span>
+                        </button>
+
+                        <!-- RESET -->
+                        <button id="btn-action-reset" class="game-action-btn">
+                            <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                            <span class="action-btn-label" data-i18n="reset">إعادة ضبط</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Google AdMob Banner: Appears ONLY inside gameplay, floating smoothly at bottom -->
+                    <div id="admob-banner-container" class="admob-banner-container">
+                        <div class="admob-banner-inner">
+                            <span class="admob-ad-badge">إعلان</span>
+                            <div class="admob-ad-content">
+                                <span class="admob-logo">Google AdMob</span>
+                                <span class="admob-unit-id">ca-app-pub-9778007569149797/1459938748</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ==========================================
+                     SCREEN 3: LEVEL SELECT (500 Levels Across 10 Worlds)
+                     ========================================== -->
+                <div id="screen-levels" class="app-screen">
+                    <div class="screen-header-bar">
+                        <button class="hud-icon-btn btn-back-to-menu">
+                            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                        </button>
+                        <h2 class="screen-header-title">المستويات (5000)</h2>
+                        <div id="level-select-stars-summary" class="stat-pill">⭐ 0/15000</div>
+                    </div>
+
+
+                    <!-- Current Stage Section -->
+                    <div class="current-stage-section">
+                        <button id="btn-jump-current-level" class="btn-current-stage">
+                            <span class="current-stage-icon">🎮</span>
+                            <div class="current-stage-info">
+                                <span class="current-stage-label">المرحلة الحالية</span>
+                                <span id="current-stage-number" class="current-stage-num">المرحلة ١</span>
+                            </div>
+                            <span class="current-stage-arrow">▶</span>
+                        </button>
+                    </div>
+
+
+
+                    <!-- Worlds Section -->
+                    <div class="worlds-section">
+                        <div class="worlds-section-header">
+                            <span class="worlds-section-title">🌍 العوالم</span>
+                            <button id="btn-open-world-picker" class="btn-worlds-browse">
+                                <span>تصفح الكل</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Worlds Chip Strip (Sliding window of worlds) -->
+                    <div id="worlds-chip-container" class="worlds-chip-container">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <!-- Levels Grid Scroll (50 Levels of Selected World) -->
+                    <div id="levels-grid-container" class="levels-grid-scroll">
+                        <!-- Populated dynamically with 50 levels per world -->
+                    </div>
+                </div>
+
+
+
+
+
+                <!-- ==========================================
+                     SCREEN 6: THEMES STORE
+                     ========================================== -->
+                <div id="screen-themes" class="app-screen">
+                    <div class="screen-header-bar">
+                        <button class="hud-icon-btn btn-back-to-menu">
+                            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                        </button>
+                        <h2 class="screen-header-title" data-i18n="themes">المظاهر</h2>
+                        <div class="stat-pill coins">🪙 <span class="user-coins-display">50</span></div>
+                    </div>
+
+                    <!-- Store Category Tabs -->
+                    <div class="store-tabs-container">
+                        <button class="store-tab-btn active" data-tab="themes">🎨 المظاهر</button>
+                        <button class="store-tab-btn" data-tab="heads">🏹 الرؤوس</button>
+                        <button class="store-tab-btn" data-tab="bodies">🐍 الأجسام</button>
+                        <button class="store-tab-btn" data-tab="trails">🌈 المسارات</button>
+                    </div>
+
+                    <div style="display: flex; justify-content: center; margin: 8px 0 10px 0;">
+                        <button id="btn-themes-ad-coins" class="btn-modal-action reward-ad-btn" style="display: inline-flex; align-items: center; gap: 8px; padding: 7px 18px; font-size: 0.85rem; border-radius: 20px; font-weight: 800;">
+                            <span>🎬</span> <span>شاهد إعلاناً واحصل على +20 🪙</span>
+                        </button>
+                    </div>
+
+                    <!-- Themes Tab Pane -->
+                    <div id="themes-grid-container" class="themes-grid store-tab-pane active">
+                        <!-- Themes populated dynamically -->
+                    </div>
+
+                    <!-- Arrow Heads Tab Pane -->
+                    <div id="heads-grid-container" class="themes-grid store-tab-pane" style="display: none;">
+                        <!-- Arrow heads populated dynamically -->
+                    </div>
+
+                    <!-- Arrow Bodies Tab Pane -->
+                    <div id="bodies-grid-container" class="themes-grid store-tab-pane" style="display: none;">
+                        <!-- Arrow bodies populated dynamically -->
+                    </div>
+
+                    <!-- Arrow Trails Tab Pane -->
+                    <div id="trails-grid-container" class="themes-grid store-tab-pane" style="display: none;">
+                        <!-- Arrow trails populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                     SCREEN 7: ACHIEVEMENTS
+                     ========================================== -->
+                <div id="screen-achievements" class="app-screen">
+                    <div class="screen-header-bar">
+                        <button class="hud-icon-btn btn-back-to-menu">
+                            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                        </button>
+                        <h2 class="screen-header-title" data-i18n="achievements">الإنجازات</h2>
+                        <div class="stat-pill coins">🪙 <span class="user-coins-display">50</span></div>
+                    </div>
+
+                    <!-- Achievements Progress Summary Card -->
+                    <div class="achievements-summary-card">
+                        <div class="ach-summary-info">
+                            <div class="ach-summary-text-group">
+                                <div class="ach-summary-label">إجمالي الإنجازات المكتملة</div>
+                                <div class="ach-summary-count"><span id="ach-unlocked-count">0</span> / <span id="ach-total-count">200</span></div>
+                            </div>
+                            <button id="btn-ach-claim-all" class="btn-claim-all-ach" style="display: none;">
+                                <span>🎁</span> <span>استلام الكل</span>
+                            </button>
+                        </div>
+                        <div class="ach-summary-bar-wrapper">
+                            <div id="ach-summary-bar-fill" class="ach-summary-bar-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Achievements Category Filter Bar (200 Achievements) -->
+                    <div class="ach-categories-bar" id="ach-categories-bar">
+                        <button class="ach-cat-btn active" data-cat="all">🌟 الكل (200)</button>
+                        <button class="ach-cat-btn" data-cat="levels">🗺️ المراحل (40)</button>
+                        <button class="ach-cat-btn" data-cat="bosses">👑 الزعماء (10)</button>
+                        <button class="ach-cat-btn" data-cat="stars">✨ النجوم (30)</button>
+                        <button class="ach-cat-btn" data-cat="puzzles">🧩 الألغاز (30)</button>
+                        <button class="ach-cat-btn" data-cat="perfect">💎 الإتقان (20)</button>
+                        <button class="ach-cat-btn" data-cat="combos">⚡ الكومبو (15)</button>
+                        <button class="ach-cat-btn" data-cat="economy">🎨 المتجر والثروة (30)</button>
+                    </div>
+
+                    <div id="achievements-list" class="achievements-list-scroll">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                     SCREEN 8: CHALLENGE MODE (نمط التحديات ⚔️)
+                     ========================================== -->
+                <div id="screen-challenge" class="app-screen">
+                    <div class="screen-header-bar">
+                        <button id="btn-challenge-back" class="hud-icon-btn btn-back-to-menu">
+                            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                        </button>
+                        <h2 class="screen-header-title" id="challenge-screen-title">نمط التحديات ⚔️</h2>
+                        <div class="stat-pill coins">🏆 <span id="challenge-trophies-display">0</span></div>
+                    </div>
+
+                    <!-- Challenge Hero Card -->
+                    <div class="challenge-hero-card">
+                        <div class="challenge-stage-row">
+                            <span class="challenge-stage-badge" id="challenge-current-stage-title">المرحلة 1</span>
+                            <span class="challenge-reward-pill" id="challenge-reward-val">🪙 +20</span>
+                        </div>
+                        <div class="challenge-stats-grid">
+                            <div class="challenge-stat-box">
+                                <div class="challenge-stat-label" id="challenge-label-time">الوقت المتاح</div>
+                                <div class="challenge-stat-value" id="challenge-time-limit">85s ⏱️</div>
+                            </div>
+                            <div class="challenge-stat-box">
+                                <div class="challenge-stat-label" id="challenge-label-best">أفضل توقيت</div>
+                                <div class="challenge-stat-value" id="challenge-best-time">--</div>
+                            </div>
+                            <div class="challenge-stat-box">
+                                <div class="challenge-stat-label" id="challenge-label-trophies">الكؤوس</div>
+                                <div class="challenge-stat-value" id="challenge-trophies-count">0 🏆</div>
+                            </div>
+                        </div>
+                        <button id="btn-challenge-play-now" class="btn-challenge-start">
+                            <span>⚡</span> <span id="challenge-play-label">بدء التحدي الآن</span> <span>⚔️</span>
+                        </button>
+                    </div>
+
+                    <!-- Stages Header + Progress -->
+                    <div class="challenge-stages-header">
+                        <span class="challenge-stages-title" id="challenge-stages-title">مراحل التحدي 0 / 50</span>
+                        <div class="challenge-progress-track"><div class="challenge-progress-fill" id="challenge-progress-fill"></div></div>
+                    </div>
+                    <div id="challenge-stages-container" class="challenge-stages-scroll">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+            </div> <!-- end screen-container -->
+
+            <!-- ==========================================
+                 MODAL 1: LEVEL COMPLETE (Matching Reference 2)
+                 ========================================== -->
+            <div id="modal-level-complete" class="app-modal">
+                <div class="modal-dialog-box">
+                    <div id="complete-title" class="complete-title-text" data-i18n="wellDone">أحسنت!</div>
+                    <div id="complete-subtitle" class="complete-subtitle-text" data-i18n="levelComplete">اكتمل المستوى!</div>
+                    <div id="boss-win-banner" class="boss-win-banner" style="display: none;">
+                        👑 سحقت الزعيم! مكافأة ملكية مضاعفة +25 🪙 🔥
+                    </div>
+
+                    <!-- 3 Stars Calculation -->
+                    <div id="complete-stars" class="complete-stars-row">
+                        <!-- Populated dynamically: ⭐ ⭐ ⭐ -->
+                    </div>
+
+                    <!-- Statistics Card -->
+                    <div class="stats-card-box">
+                        <div class="stat-item-row">
+                            <span class="stat-item-label" data-i18n="moves">الحركات:</span>
+                            <span id="stat-moves-val" class="stat-item-value">13</span>
+                        </div>
+                        <div class="stat-item-row">
+                            <span class="stat-item-label" data-i18n="target">الهدف:</span>
+                            <span id="stat-target-val" class="stat-item-value">12</span>
+                        </div>
+                        <div class="stat-item-row">
+                            <span class="stat-item-label" data-i18n="bestResult">أفضل نتيجة:</span>
+                            <span id="stat-best-val" class="stat-item-value">10,450</span>
+                        </div>
+                        <div class="stat-item-row">
+                            <span class="stat-item-label" data-i18n="reward">المكافأة:</span>
+                            <span id="stat-coins-earned" class="stat-item-value" style="color: var(--neon-gold);">+35 🪙</span>
+                        </div>
+                    </div>
+
+                    <!-- Actions List: "المستوى التالي", "إعادة المحاولة", "الرئيسية" -->
+                    <!-- IMPORTANT: "المستوى التالي" ONLY exists on this screen! -->
+                    <div class="modal-actions-list">
+                        <button id="btn-complete-double-reward" class="btn-modal-action reward-ad-btn" style="height: 48px; font-weight: 900;" data-i18n="doubleRewardAd">
+                            🎬 ضاعف المكافأة x2 (شاهد إعلان) 🪙
+                        </button>
+                        <button id="btn-complete-next" class="btn-modal-action primary-cyan" data-i18n="nextLevel">
+                            المستوى التالي
+                        </button>
+                        <button id="btn-complete-retry" class="btn-modal-action secondary-dark" data-i18n="retry">
+                            إعادة المحاولة
+                        </button>
+                        <button id="btn-complete-home" class="btn-modal-action secondary-dark" data-i18n="home">
+                            الرئيسية
+                        </button>
+                        <button id="btn-complete-share" class="btn-modal-action share-btn" style="height: 48px;">
+                            <span>📤</span> <span>مشاركة الفوز مع الأصدقاء</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 MODAL 2: LEVEL FAILED SCREEN
+                 ========================================== -->
+            <div id="modal-level-failed" class="app-modal">
+                <div class="modal-dialog-box failed-dialog">
+                    <div id="failed-title" class="failed-title-text" data-i18n="attemptsOver">خسرت المرحلة!</div>
+
+                    <div class="failed-stars-lost" id="failed-stars-display">
+                        <span class="failed-star lost">★</span>
+                        <span class="failed-star lost">★</span>
+                        <span class="failed-star lost">★</span>
+                    </div>
+
+                    <p id="failed-desc-text" style="font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;" data-i18n="failedDesc">
+                        خسرت جميع النجوم بسبب 3 أخطاء! شاهد إعلاناً لمتابعة اللعب من آخر حركة واستعادة 3 نجوم ⭐⭐⭐
+                    </p>
+
+                    <!-- Actions: Rewarded Ad to Resume OR Restart from Start OR Return to Main Menu -->
+                    <div class="modal-actions-list">
+                        <button id="btn-failed-watch-ad" class="btn-modal-action reward-ad-btn" data-i18n="watchAdReward" style="height: 52px; font-weight: 900; font-size: 1rem;">
+                            🎬 استئناف من آخر حركة (شاهد إعلان)
+                        </button>
+                        <button id="btn-failed-restart" class="btn-modal-action secondary-dark" style="height: 48px; font-weight: 800; font-size: 0.95rem;" data-i18n="restartFromStart">
+                            🔄 إعادة المحاولة من البداية
+                        </button>
+                        <button id="btn-failed-home" class="btn-modal-action secondary-dark" data-i18n="home" style="height: 48px; font-weight: 800; font-size: 0.95rem;">
+                            الرئيسية
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 MODAL 2.5: AD OFFER PROMPT (Out of Hints / Lasers)
+                 ========================================== -->
+            <div id="modal-ad-offer" class="app-modal">
+                <div class="modal-dialog-box">
+                    <div id="ad-offer-icon" style="font-size: 2.8rem; margin-bottom: 8px;">💡</div>
+                    <h3 id="ad-offer-title" style="font-size: 1.3rem; font-weight: 900; margin-bottom: 8px;" data-i18n="outOfHints">نفذت التلميحات!</h3>
+                    <p id="ad-offer-desc" style="font-size: 0.92rem; line-height: 1.5; margin-bottom: 20px;" data-i18n="outOfHintsDesc">
+                        شاهد إعلاناً قصيراً (5 ثوانٍ) للحصول على تلميح مجاني فوري ومتابعة اللعب!
+                    </p>
+                    <div class="modal-actions-list">
+                        <button id="btn-ad-offer-watch" class="btn-modal-action reward-ad-btn" style="height: 48px; font-weight: 900;" data-i18n="watchAdForHint">
+                            🎬 شاهد إعلان للحصول على التلميح
+                        </button>
+                        <button id="btn-ad-offer-cancel" class="btn-modal-action secondary-dark" style="height: 44px;" data-i18n="cancel">
+                            إلغاء
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 MODAL 4: HINT DIALOG (Matching Reference Image)
+                 ========================================== -->
+            <div id="modal-hint-dialog" class="app-modal">
+                <div class="modal-dialog-box">
+                    <div style="font-size: 2.2rem; margin-bottom: 8px;">💡</div>
+                    <h3 style="font-size: 1.3rem; font-weight: 900; margin-bottom: 8px;" data-i18n="hint">تلميح</h3>
+                    <p id="hint-dialog-text" style="font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;" data-i18n="hintDesc">
+                        هذا السهم لديه مسار هروب سالك الآن! اضغط عليه مباشرة للهروب من الشبكة.
+                    </p>
+                    <button id="btn-hint-dialog-ok" class="btn-modal-action primary-cyan" style="height: 46px;" data-i18n="ok">
+                        موافق
+                    </button>
+                </div>
+            </div>
+
+            <!-- Confetti Celebration Layer -->
+            <div id="confetti-container" class="confetti-container"></div>
+
+            <!-- ==========================================
+                 MODAL 5.5: GAMEPLAY PAUSE
+                 ========================================== -->
+            <div id="modal-pause" class="app-modal">
+                <div class="modal-dialog-box pause-dialog">
+                    <div style="font-size: 2.8rem; margin-bottom: 6px;">⏸️</div>
+                    <h3 style="font-size: 1.45rem; font-weight: 900; margin-bottom: 6px;" data-i18n="gamePaused">اللعبة متوقفة مؤقتاً</h3>
+                    <p style="font-size: 0.92rem; color: #94a3b8; margin-bottom: 20px;">
+                        المسار بانتظارك! هل ترغب في المتابعة أو إعادة المحاولة؟
+                    </p>
+                    <div class="modal-actions-list">
+                        <button id="btn-pause-resume" class="btn-modal-action primary-cyan" style="height: 50px;">
+                            <span>▶️</span> <span data-i18n="resume">متابعة اللعب</span>
+                        </button>
+                        <button id="btn-pause-restart" class="btn-modal-action secondary-dark" style="height: 48px;">
+                            <span>🔄</span> <span data-i18n="retry">إعادة المحاولة</span>
+                        </button>
+                        <button id="btn-pause-settings" class="btn-modal-action secondary-dark" style="height: 48px;">
+                            <span>⚙️</span> <span data-i18n="settings">الإعدادات</span>
+                        </button>
+                        <button id="btn-pause-home" class="btn-modal-action secondary-dark" style="height: 48px;">
+                            <span>🏠</span> <span data-i18n="home">الرئيسية</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 MODAL 6: SETTINGS
+                 ========================================== -->
+            <div id="modal-settings" class="app-modal">
+                <div class="modal-dialog-box">
+                    <h3 style="font-size: 1.4rem; font-weight: 900; margin-bottom: 14px;" data-i18n="settings">الإعدادات</h3>
+
+                    <div class="settings-list">
+                        <div class="setting-row">
+                            <span data-i18n="sound">المؤثرات الصوتية</span>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-sound" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <span data-i18n="music">الموسيقى الخلفية</span>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-music">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <span data-i18n="vibration">الاهتزاز</span>
+                            <label class="switch">
+                                <input type="checkbox" id="toggle-vibration" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <span data-i18n="language">اللغة</span>
+                            <select id="select-language" class="app-select">
+                                <option value="ar">العربية (Arabic)</option>
+                                <option value="en">English (الإنجليزية)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions-list" style="margin-top: 14px;">
+                        <button id="btn-reset-data" class="btn-modal-action secondary-dark" style="color: var(--neon-red); border-color: rgba(255, 45, 85, 0.4);" data-i18n="resetProgress">
+                            إعادة تعيين التقدم
+                        </button>
+                        <button id="btn-close-settings" class="btn-modal-action primary-cyan" data-i18n="saveAndClose">
+                            حفظ وإغلاق
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 MODAL 7: PAUSE MENU
+                 ========================================== -->
+            <div id="modal-pause" class="app-modal">
+                <div class="modal-dialog-box">
+                    <h3 style="font-size: 1.5rem; font-weight: 900; margin-bottom: 20px;" data-i18n="gamePaused">اللعبة متوقفة مؤقتاً</h3>
+                    <div class="modal-actions-list">
+                        <button id="btn-resume-pause" class="btn-modal-action primary-cyan" data-i18n="resume">
+                            متابعة اللعب
+                        </button>
+                        <button id="btn-home-pause" class="btn-modal-action secondary-dark" data-i18n="home">
+                            الرئيسية
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 MODAL 8: WORLD SELECTOR (100 Worlds)
+                 ========================================== -->
+            <div id="modal-world-picker" class="app-modal">
+                <div class="modal-dialog-box world-picker-dialog">
+                    <div class="modal-header-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 12px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0;">🌐 اختيار العالم (1 - 100)</h3>
+                        <button id="btn-close-world-picker" class="hud-icon-btn" style="width: 32px; height: 32px;">✕</button>
+                    </div>
+                    <div class="world-picker-search-row">
+                        <input id="input-world-search" type="text" placeholder="ابحث باسم العالم..." class="world-search-input" />
+                        <button id="btn-go-world" class="btn-go-world">انتقال</button>
+                    </div>
+                    <div id="world-picker-grid" class="world-picker-grid">
+                        <!-- Populated dynamically with 100 world cards -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 MODAL 8.5: DAILY LUCKY SPIN WHEEL (عجلة الحظ اليومية)
+                 ========================================== -->
+            <div id="modal-lucky-spin" class="app-modal">
+                <div class="modal-dialog-box lucky-wheel-dialog">
+                    <div class="modal-header-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 8px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <span>🎡</span> <span>عجلة الحظ اليومية</span>
+                        </h3>
+                        <button id="btn-close-lucky-spin" class="hud-icon-btn" style="width: 32px; height: 32px;">✕</button>
+                    </div>
+
+                    <p style="font-size: 0.88rem; margin-bottom: 12px; text-align: center;">
+                        دوّر العجلة يومياً واربح عملات وتلميحات وصعقات ليزر مجانية! 🎁
+                    </p>
+
+                    <!-- Lucky Wheel Container with Top Pointer -->
+                    <div class="lucky-wheel-container">
+                        <div class="wheel-pointer-needle">▼</div>
+                        <canvas id="lucky-wheel-canvas" width="280" height="280" class="lucky-wheel-canvas"></canvas>
+                        <div class="wheel-center-hub">🎯</div>
+                    </div>
+
+                    <div id="lucky-wheel-result" class="lucky-wheel-result" style="display: none;"></div>
+
+                    <div class="modal-actions-list" style="margin-top: 14px; width: 100%;">
+                        <button id="btn-spin-wheel" class="btn-modal-action primary-cyan" style="height: 48px; font-size: 1.05rem; font-weight: 900;">
+                            <span>🎡</span> <span>تدوير مجاني!</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 MODAL 8.8: DAILY MISSIONS (مهام اليوم 📜)
+                 ========================================== -->
+            <div id="modal-daily-missions" class="app-modal">
+                <div class="modal-dialog-box missions-dialog">
+                    <div class="modal-header-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 8px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <span>📜</span> <span>مهام اليوم</span>
+                        </h3>
+                        <button id="btn-close-daily-missions" class="hud-icon-btn" style="width: 32px; height: 32px;">✕</button>
+                    </div>
+
+                    <p style="font-size: 0.88rem; margin-bottom: 12px; text-align: center;">
+                        أكمل المهام اليومية واحصل على مكافآت كوينز قيّمة! 🪙
+                    </p>
+
+                    <div id="daily-missions-list" class="missions-list">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ==========================================
+                 MODAL 8.95: PLAYER PROFILE & BRAIN IQ (🧠 ملف اللاعب ومقياس الذكاء)
+                 ========================================== -->
+            <div id="modal-player-profile" class="app-modal">
+                <div class="modal-dialog-box profile-dialog">
+                    <div class="modal-header-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 12px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 900; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <span>🧠</span> <span>بطاقة اللاعب ومقياس الذكاء</span>
+                        </h3>
+                        <button id="btn-close-player-profile" class="hud-icon-btn" style="width: 32px; height: 32px;">✕</button>
+                    </div>
+
+                    <div class="profile-iq-hero-card">
+                        <div class="profile-iq-circle">
+                            <div class="iq-score-value" id="profile-iq-score">142</div>
+                            <div class="iq-score-unit">IQ تكتيكي</div>
+                        </div>
+                        <div class="profile-rank-info">
+                            <div class="profile-rank-badge" id="profile-rank-badge">
+                                <span id="profile-rank-icon">🥇</span>
+                                <span id="profile-rank-title">خبير متاهات</span>
+                            </div>
+                            <p class="profile-rank-desc" id="profile-rank-desc">أداء استراتيجي متقدم في فك العقد والمسارات المعقدة</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-stats-grid">
+                        <div class="profile-stat-box">
+                            <span class="p-stat-icon">🏆</span>
+                            <span class="p-stat-val" id="profile-stat-levels">0</span>
+                            <span class="p-stat-lbl">مراحل محلولة</span>
+                        </div>
+                        <div class="profile-stat-box">
+                            <span class="p-stat-icon">★</span>
+                            <span class="p-stat-val" id="profile-stat-stars">0</span>
+                            <span class="p-stat-lbl">مجموع النجوم</span>
+                        </div>
+                        <div class="profile-stat-box">
+                            <span class="p-stat-icon">🔥</span>
+                            <span class="p-stat-val" id="profile-stat-combo">x0</span>
+                            <span class="p-stat-lbl">أعلى كومبو</span>
+                        </div>
+                        <div class="profile-stat-box">
+                            <span class="p-stat-icon">🎯</span>
+                            <span class="p-stat-val" id="profile-stat-accuracy">100%</span>
+                            <span class="p-stat-lbl">دقة التوجيه</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-actions-row">
+                        <button id="btn-profile-share" class="btn-primary-play" style="width: 100%;">
+                            <span>📤 مشاركة بطاقة الذكاء مع أصدقائك</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div> <!-- end android-device-wrapper -->
+    </div> <!-- end app-viewport -->
+
+    <!-- Scripts with Cache-Busting Parameters -->
+    <script src="js/audio.js?v=48.0"></script>
+    <script src="js/storage.js?v=48.0"></script>
+    <script src="js/generator.js?v=48.0"></script>
+    <script src="js/game.js?v=48.0"></script>
+    <script src="js/ui.js?v=48.0"></script>
+    <script src="js/app.js?v=48.0"></script>
+</body>
+</html>
