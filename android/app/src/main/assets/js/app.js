@@ -1,4 +1,4 @@
-// Main Application Bootstrapper - Android Only
+/// Main Application Bootstrapper - Android Only
 document.addEventListener('DOMContentLoaded', () => {
     // التحقق الصارم: حظر التشغيل تماماً خارج تطبيق الأندرويد الأصلي
     if (!window.AndroidNative) {
@@ -87,6 +87,26 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     document.addEventListener('click', unlockAudio, { once: true });
     document.addEventListener('touchstart', unlockAudio, { once: true });
+
+    // 4. Prevent window-level rubber-band dragging/overscroll bounce that exposes background void
+    document.addEventListener('touchmove', (e) => {
+        let el = e.target;
+        let canScroll = false;
+        while (el && el !== document.body && el !== document.documentElement) {
+            if (el.scrollHeight > el.clientHeight + 2) {
+                const style = window.getComputedStyle(el);
+                const overflowY = style.overflowY;
+                if (overflowY === 'auto' || overflowY === 'scroll') {
+                    canScroll = true;
+                    break;
+                }
+            }
+            el = el.parentElement;
+        }
+        if (!canScroll) {
+            e.preventDefault();
+        }
+    }, { passive: false });
 
     console.log('Arrow Escape game initialized successfully on Native Android.');
 });

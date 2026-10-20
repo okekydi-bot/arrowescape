@@ -12,106 +12,106 @@
 class WorldCatalog {
     static getDistinctWorlds() {
         return [
-            { name: 'أفق النيون', icon: '🔷', color: '#00f3ff' },
-            { name: 'شفق الساينث', icon: '🌆', color: '#ff007f' },
-            { name: 'مصفوفة الزمرد', icon: '🟩', color: '#00ff66' },
-            { name: 'سديم البلازما', icon: '🔮', color: '#b026ff' },
-            { name: 'العرش الذهبي', icon: '👑', color: '#ffb700' },
-            { name: 'بركان الصهارة', icon: '🌋', color: '#ff3b30' },
-            { name: 'كوانتم الجليد', icon: '❄️', color: '#00d2ff' },
-            { name: 'صاعقة الأثير', icon: '⚡', color: '#ff9500' },
-            { name: 'سماء السديم', icon: '🌌', color: '#a855f7' },
-            { name: 'قلب الأوميغا', icon: '♾️', color: '#ff0055' },
-            { name: 'واحة الكريستال', icon: '💎', color: '#06b6d4' },
-            { name: 'رمال العقيق', icon: '🏜️', color: '#f59e0b' },
-            { name: 'شاطئ المرجان', icon: '🪸', color: '#f43f5e' },
-            { name: 'أعماق المحيط', icon: '🌊', color: '#3b82f6' },
-            { name: 'مدار الكواكب', icon: '🪐', color: '#8b5cf6' },
-            { name: 'نيزك الفيروز', icon: '☄️', color: '#14b8a6' },
-            { name: 'فجر الإشراق', icon: '☀️', color: '#eab308' },
-            { name: 'ضوء القمر', icon: '🌙', color: '#94a3b8' },
-            { name: 'فضاء النوفا', icon: '✨', color: '#facc15' },
-            { name: 'دوامة الكوازار', icon: '🌀', color: '#6366f1' },
-            { name: 'سديم الأندروميدا', icon: '💫', color: '#ec4899' },
-            { name: 'أطلال تيتان', icon: '🏛️', color: '#d97706' },
-            { name: 'برج الفلك', icon: '🔭', color: '#84cc16' },
-            { name: 'جزيرة الشهب', icon: '🏝️', color: '#22d3ee' },
-            { name: 'وادي المذنبات', icon: '🌠', color: '#c084fc' },
-            { name: 'كهف التوباز', icon: '🪨', color: '#fb923c' },
-            { name: 'بستان الأزهار', icon: '🌸', color: '#f472b6' },
-            { name: 'درب المجرات', icon: '🌌', color: '#818cf8' },
-            { name: 'مدينة الزئبق', icon: '🏙️', color: '#cbd5e1' },
-            { name: 'قلب المفاعل', icon: '☢️', color: '#4ade80' },
-            { name: 'أفق المستقبل', icon: '📡', color: '#38bdf8' },
-            { name: 'ممر الفوتون', icon: '💡', color: '#fde047' },
-            { name: 'حصن الأيونات', icon: '🛡️', color: '#a78bfa' },
-            { name: 'برج الهايبر', icon: '🗼', color: '#fb7185' },
-            { name: 'ساحة الروبوتات', icon: '🤖', color: '#94a3b8' },
-            { name: 'تردد الأثير', icon: '📻', color: '#34d399' },
-            { name: 'سراب النيون', icon: '🌆', color: '#f43f5e' },
-            { name: 'رنين السيليكون', icon: '💾', color: '#60a5fa' },
-            { name: 'غابة الأرواح', icon: '🌲', color: '#059669' },
-            { name: 'مملكة السراب', icon: '🏰', color: '#d946ef' },
-            { name: 'قصر البلور', icon: '💠', color: '#2dd4bf' },
-            { name: 'عرش الجليد', icon: '🧊', color: '#7dd3fc' },
-            { name: 'مرج الشفق', icon: '🌾', color: '#a3e635' },
-            { name: 'كهف الزمرد', icon: '❇️', color: '#4ade80' },
-            { name: 'بحيرة النور', icon: '🫧', color: '#38bdf8' },
-            { name: 'شلال النقاء', icon: '💧', color: '#0284c7' },
-            { name: 'قمة الضباب', icon: '🏔️', color: '#c084fc' },
-            { name: 'معبد الصاعقة', icon: '⛩️', color: '#e11d48' },
-            { name: 'أبعاد الأثير', icon: '🔮', color: '#9333ea' },
-            { name: 'أفق الحدث', icon: '🕳️', color: '#475569' },
-            { name: 'دوامة الفراغ', icon: '🌪️', color: '#64748b' },
-            { name: 'نسيج الكوانتم', icon: '🧬', color: '#06b6d4' },
-            { name: 'بوابة الثقوب', icon: '🌌', color: '#7c3aed' },
-            { name: 'مدار المريخ', icon: '🔴', color: '#dc2626' },
-            { name: 'أقمار المشتري', icon: '🪐', color: '#ca8a04' },
-            { name: 'حلقات زحل', icon: '💍', color: '#eab308' },
-            { name: 'رياح الفضاء', icon: '💨', color: '#0ea5e9' },
-            { name: 'سماء البنفسج', icon: '☂️', color: '#a855f7' },
-            { name: 'كهف الماس', icon: '💎', color: '#38bdf8' },
-            { name: 'منجم الياقوت', icon: '❤️', color: '#e11d48' },
-            { name: 'كنوز العقيق', icon: '🧡', color: '#ea580c' },
-            { name: 'عرش الفيروز', icon: '🩵', color: '#06b6d4' },
-            { name: 'أسرار الجمشت', icon: '💜', color: '#9333ea' },
-            { name: 'جوهرة السافير', icon: '💙', color: '#2563eb' },
-            { name: 'بريق الأوبال', icon: '🤍', color: '#f1f5f9' },
-            { name: 'رمال اللؤلؤ', icon: '🦪', color: '#e2e8f0' },
-            { name: 'جزر الكوارتز', icon: '⛰️', color: '#f472b6' },
-            { name: 'بركان البازلت', icon: '🌋', color: '#b91c1c' },
-            { name: 'شبكة الألياف', icon: '🌐', color: '#0284c7' },
-            { name: 'قلب الشفرة', icon: '⚡', color: '#f59e0b' },
-            { name: 'محور البيانات', icon: '🖧', color: '#10b981' },
-            { name: 'سحابة النانو', icon: '☁️', color: '#93c5fd' },
-            { name: 'مصفوفة العقل', icon: '🧠', color: '#ec4899' },
-            { name: 'معالج التيتانيوم', icon: '⚙️', color: '#94a3b8' },
-            { name: 'تدفق النبض', icon: '🌊', color: '#06b6d4' },
-            { name: 'تشفير الكوانتم', icon: '🔐', color: '#8b5cf6' },
-            { name: 'صدى الأثير', icon: '🔈', color: '#a855f7' },
-            { name: 'حقل الجاذبية', icon: '🧲', color: '#ef4444' },
-            { name: 'وادي العنقاء', icon: '🔥', color: '#f97316' },
-            { name: 'قلعة التنين', icon: '🐉', color: '#dc2626' },
-            { name: 'بستان الخلود', icon: '🍃', color: '#16a34a' },
-            { name: 'مسار الصقور', icon: '🦅', color: '#ca8a04' },
-            { name: 'أطلال الفينيق', icon: '🏺', color: '#b45309' },
-            { name: 'سماء الفردوس', icon: '🌈', color: '#f43f5e' },
-            { name: 'بحر الأساطير', icon: '⛵', color: '#0284c7' },
-            { name: 'جزيرة الخلود', icon: '🏝️', color: '#14b8a6' },
-            { name: 'قمة الأولمب', icon: '⚡', color: '#eab308' },
-            { name: 'واحة السلام', icon: '🕊️', color: '#6ee7b7' },
-            { name: 'فجر الأبدية', icon: '🌅', color: '#f43f5e' },
-            { name: 'بوابة اللانهاية', icon: '♾️', color: '#8b5cf6' },
-            { name: 'نقطة التفرد', icon: '🎯', color: '#ef4444' },
-            { name: 'شعلة الأزل', icon: '🕯️', color: '#f59e0b' },
-            { name: 'شفق الخلود', icon: '🌆', color: '#ec4899' },
-            { name: 'مدار النور', icon: '💫', color: '#38bdf8' },
-            { name: 'كوكب الأحلام', icon: '🪐', color: '#a855f7' },
-            { name: 'إشعاع النبض', icon: '🔆', color: '#fbbf24' },
-            { name: 'قلب الوجود', icon: '💖', color: '#f43f5e' },
-            { name: 'عرش النجوم', icon: '🌟', color: '#ffd700' },
-            { name: 'تاج الكواكب', icon: '👑', color: '#a855f7' },
-            { name: 'أفق الأوميغا', icon: '⚡', color: '#ff0055' }
+            { name: 'أفق النيون', nameAr: 'أفق النيون', nameEn: 'Neon Horizon', icon: '🔷', color: '#00f3ff' },
+            { name: 'شفق الساينث', nameAr: 'شفق الساينث', nameEn: 'Synth Twilight', icon: '🌆', color: '#ff007f' },
+            { name: 'مصفوفة الزمرد', nameAr: 'مصفوفة الزمرد', nameEn: 'Emerald Matrix', icon: '🟩', color: '#00ff66' },
+            { name: 'سديم البلازما', nameAr: 'سديم البلازما', nameEn: 'Plasma Nebula', icon: '🔮', color: '#b026ff' },
+            { name: 'العرش الذهبي', nameAr: 'العرش الذهبي', nameEn: 'Golden Throne', icon: '👑', color: '#ffb700' },
+            { name: 'بركان الصهارة', nameAr: 'بركان الصهارة', nameEn: 'Magma Volcano', icon: '🌋', color: '#ff3b30' },
+            { name: 'كوانتم الجليد', nameAr: 'كوانتم الجليد', nameEn: 'Quantum Ice', icon: '❄️', color: '#00d2ff' },
+            { name: 'صاعقة الأثير', nameAr: 'صاعقة الأثير', nameEn: 'Aether Lightning', icon: '⚡', color: '#ff9500' },
+            { name: 'سماء السديم', nameAr: 'سماء السديم', nameEn: 'Nebula Sky', icon: '🌌', color: '#a855f7' },
+            { name: 'قلب الأوميغا', nameAr: 'قلب الأوميغا', nameEn: 'Omega Core', icon: '♾️', color: '#ff0055' },
+            { name: 'واحة الكريستال', nameAr: 'واحة الكريستال', nameEn: 'Crystal Oasis', icon: '💎', color: '#06b6d4' },
+            { name: 'رمال العقيق', nameAr: 'رمال العقيق', nameEn: 'Agate Sands', icon: '🏜️', color: '#f59e0b' },
+            { name: 'شاطئ المرجان', nameAr: 'شاطئ المرجان', nameEn: 'Coral Coast', icon: '🪸', color: '#f43f5e' },
+            { name: 'أعماق المحيط', nameAr: 'أعماق المحيط', nameEn: 'Ocean Depths', icon: '🌊', color: '#3b82f6' },
+            { name: 'مدار الكواكب', nameAr: 'مدار الكواكب', nameEn: 'Planetary Orbit', icon: '🪐', color: '#8b5cf6' },
+            { name: 'نيزك الفيروز', nameAr: 'نيزك الفيروز', nameEn: 'Turquoise Meteor', icon: '☄️', color: '#14b8a6' },
+            { name: 'فجر الإشراق', nameAr: 'فجر الإشراق', nameEn: 'Radiant Dawn', icon: '☀️', color: '#eab308' },
+            { name: 'ضوء القمر', nameAr: 'ضوء القمر', nameEn: 'Moonlight Realm', icon: '🌙', color: '#94a3b8' },
+            { name: 'فضاء النوفا', nameAr: 'فضاء النوفا', nameEn: 'Nova Space', icon: '✨', color: '#facc15' },
+            { name: 'دوامة الكوازار', nameAr: 'دوامة الكوازار', nameEn: 'Quasar Vortex', icon: '🌀', color: '#6366f1' },
+            { name: 'سديم الأندروميدا', nameAr: 'سديم الأندروميدا', nameEn: 'Andromeda Nebula', icon: '💫', color: '#ec4899' },
+            { name: 'أطلال تيتان', nameAr: 'أطلال تيتان', nameEn: 'Titan Ruins', icon: '🏛️', color: '#d97706' },
+            { name: 'برج الفلك', nameAr: 'برج الفلك', nameEn: 'Astronomy Tower', icon: '🔭', color: '#84cc16' },
+            { name: 'جزيرة الشهب', nameAr: 'جزيرة الشهب', nameEn: 'Meteor Isle', icon: '🏝️', color: '#22d3ee' },
+            { name: 'وادي المذنبات', nameAr: 'وادي المذنبات', nameEn: 'Comet Valley', icon: '🌠', color: '#c084fc' },
+            { name: 'كهف التوباز', nameAr: 'كهف التوباز', nameEn: 'Topaz Cave', icon: '🪨', color: '#fb923c' },
+            { name: 'بستان الأزهار', nameAr: 'بستان الأزهار', nameEn: 'Flower Grove', icon: '🌸', color: '#f472b6' },
+            { name: 'درب المجرات', nameAr: 'درب المجرات', nameEn: 'Galaxy Trail', icon: '🌌', color: '#818cf8' },
+            { name: 'مدينة الزئبق', nameAr: 'مدينة الزئبق', nameEn: 'Mercury City', icon: '🏙️', color: '#cbd5e1' },
+            { name: 'قلب المفاعل', nameAr: 'قلب المفاعل', nameEn: 'Reactor Core', icon: '☢️', color: '#4ade80' },
+            { name: 'أفق المستقبل', nameAr: 'أفق المستقبل', nameEn: 'Future Horizon', icon: '📡', color: '#38bdf8' },
+            { name: 'ممر الفوتون', nameAr: 'ممر الفوتون', nameEn: 'Photon Path', icon: '💡', color: '#fde047' },
+            { name: 'حصن الأيونات', nameAr: 'حصن الأيونات', nameEn: 'Ion Citadel', icon: '🛡️', color: '#a78bfa' },
+            { name: 'برج الهايبر', nameAr: 'برج الهايبر', nameEn: 'Hyper Spire', icon: '🗼', color: '#fb7185' },
+            { name: 'ساحة الروبوتات', nameAr: 'ساحة الروبوتات', nameEn: 'Mecha Arena', icon: '🤖', color: '#94a3b8' },
+            { name: 'تردد الأثير', nameAr: 'تردد الأثير', nameEn: 'Aether Frequency', icon: '📻', color: '#34d399' },
+            { name: 'سراب النيون', nameAr: 'سراب النيون', nameEn: 'Neon Mirage', icon: '🌆', color: '#f43f5e' },
+            { name: 'رنين السيليكون', nameAr: 'رنين السيليكون', nameEn: 'Silicon Resonance', icon: '💾', color: '#60a5fa' },
+            { name: 'غابة الأرواح', nameAr: 'غابة الأرواح', nameEn: 'Spirit Forest', icon: '🌲', color: '#059669' },
+            { name: 'مملكة السراب', nameAr: 'مملكة السراب', nameEn: 'Mirage Kingdom', icon: '🏰', color: '#d946ef' },
+            { name: 'قصر البلور', nameAr: 'قصر البلور', nameEn: 'Crystal Palace', icon: '💠', color: '#2dd4bf' },
+            { name: 'عرش الجليد', nameAr: 'عرش الجليد', nameEn: 'Ice Throne', icon: '🧊', color: '#7dd3fc' },
+            { name: 'مرج الشفق', nameAr: 'مرج الشفق', nameEn: 'Twilight Meadow', icon: '🌾', color: '#a3e635' },
+            { name: 'كهف الزمرد', nameAr: 'كهف الزمرد', nameEn: 'Emerald Cavern', icon: '❇️', color: '#4ade80' },
+            { name: 'بحيرة النور', nameAr: 'بحيرة النور', nameEn: 'Lake of Light', icon: '🫧', color: '#38bdf8' },
+            { name: 'شلال النقاء', nameAr: 'شلال النقاء', nameEn: 'Purity Falls', icon: '💧', color: '#0284c7' },
+            { name: 'قمة الضباب', nameAr: 'قمة الضباب', nameEn: 'Mist Peak', icon: '🏔️', color: '#c084fc' },
+            { name: 'معبد الصاعقة', nameAr: 'معبد الصاعقة', nameEn: 'Thunder Temple', icon: '⛩️', color: '#e11d48' },
+            { name: 'أبعاد الأثير', nameAr: 'أبعاد الأثير', nameEn: 'Aether Dimensions', icon: '🔮', color: '#9333ea' },
+            { name: 'أفق الحدث', nameAr: 'أفق الحدث', nameEn: 'Event Horizon', icon: '🕳️', color: '#475569' },
+            { name: 'دوامة الفراغ', nameAr: 'دوامة الفراغ', nameEn: 'Void Vortex', icon: '🌪️', color: '#64748b' },
+            { name: 'نسيج الكوانتم', nameAr: 'نسيج الكوانتم', nameEn: 'Quantum Fabric', icon: '🧬', color: '#06b6d4' },
+            { name: 'بوابة الثقوب', nameAr: 'بوابة الثقوب', nameEn: 'Wormhole Gate', icon: '🌌', color: '#7c3aed' },
+            { name: 'مدار المريخ', nameAr: 'مدار المريخ', nameEn: 'Mars Orbit', icon: '🔴', color: '#dc2626' },
+            { name: 'أقمار المشتري', nameAr: 'أقمار المشتري', nameEn: 'Jupiter Moons', icon: '🪐', color: '#ca8a04' },
+            { name: 'حلقات زحل', nameAr: 'حلقات زحل', nameEn: 'Saturn Rings', icon: '💍', color: '#eab308' },
+            { name: 'رياح الفضاء', nameAr: 'رياح الفضاء', nameEn: 'Solar Winds', icon: '💨', color: '#0ea5e9' },
+            { name: 'سماء البنفسج', nameAr: 'سماء البنفسج', nameEn: 'Violet Sky', icon: '☂️', color: '#a855f7' },
+            { name: 'كهف الماس', nameAr: 'كهف الماس', nameEn: 'Diamond Cave', icon: '💎', color: '#38bdf8' },
+            { name: 'منجم الياقوت', nameAr: 'منجم الياقوت', nameEn: 'Ruby Mine', icon: '❤️', color: '#e11d48' },
+            { name: 'كنوز العقيق', nameAr: 'كنوز العقيق', nameEn: 'Agate Treasures', icon: '🧡', color: '#ea580c' },
+            { name: 'عرش الفيروز', nameAr: 'عرش الفيروز', nameEn: 'Turquoise Throne', icon: '🩵', color: '#06b6d4' },
+            { name: 'أسرار الجمشت', nameAr: 'أسرار الجمشت', nameEn: 'Amethyst Secrets', icon: '💜', color: '#9333ea' },
+            { name: 'جوهرة السافير', nameAr: 'جوهرة السافير', nameEn: 'Sapphire Jewel', icon: '💙', color: '#2563eb' },
+            { name: 'بريق الأوبال', nameAr: 'بريق الأوبال', nameEn: 'Opal Radiance', icon: '🤍', color: '#f1f5f9' },
+            { name: 'رمال اللؤلؤ', nameAr: 'رمال اللؤلؤ', nameEn: 'Pearl Sands', icon: '🦪', color: '#e2e8f0' },
+            { name: 'جزر الكوارتز', nameAr: 'جزر الكوارتز', nameEn: 'Quartz Isles', icon: '⛰️', color: '#f472b6' },
+            { name: 'بركان البازلت', nameAr: 'بركان البازلت', nameEn: 'Basalt Volcano', icon: '🌋', color: '#b91c1c' },
+            { name: 'شبكة الألياف', nameAr: 'شبكة الألياف', nameEn: 'Fiber Network', icon: '🌐', color: '#0284c7' },
+            { name: 'قلب الشفرة', nameAr: 'قلب الشفرة', nameEn: 'Code Nexus', icon: '⚡', color: '#f59e0b' },
+            { name: 'محور البيانات', nameAr: 'محور البيانات', nameEn: 'Data Hub', icon: '🖧', color: '#10b981' },
+            { name: 'سحابة النانو', nameAr: 'سحابة النانو', nameEn: 'Nano Cloud', icon: '☁️', color: '#93c5fd' },
+            { name: 'مصفوفة العقل', nameAr: 'مصفوفة العقل', nameEn: 'Mind Matrix', icon: '🧠', color: '#ec4899' },
+            { name: 'معالج التيتانيوم', nameAr: 'معالج التيتانيوم', nameEn: 'Titanium Core', icon: '⚙️', color: '#94a3b8' },
+            { name: 'تدفق النبض', nameAr: 'تدفق النبض', nameEn: 'Pulse Stream', icon: '🌊', color: '#06b6d4' },
+            { name: 'تشفير الكوانتم', nameAr: 'تشفير الكوانتم', nameEn: 'Quantum Cipher', icon: '🔐', color: '#8b5cf6' },
+            { name: 'صدى الأثير', nameAr: 'صدى الأثير', nameEn: 'Aether Echo', icon: '🔈', color: '#a855f7' },
+            { name: 'حقل الجاذبية', nameAr: 'حقل الجاذبية', nameEn: 'Gravity Field', icon: '🧲', color: '#ef4444' },
+            { name: 'وادي العنقاء', nameAr: 'وادي العنقاء', nameEn: 'Phoenix Valley', icon: '🔥', color: '#f97316' },
+            { name: 'قلعة التنين', nameAr: 'قلعة التنين', nameEn: 'Dragon Keep', icon: '🐉', color: '#dc2626' },
+            { name: 'بستان الخلود', nameAr: 'بستان الخلود', nameEn: 'Elysian Grove', icon: '🍃', color: '#16a34a' },
+            { name: 'مسار الصقور', nameAr: 'مسار الصقور', nameEn: 'Falcon Trail', icon: '🦅', color: '#ca8a04' },
+            { name: 'أطلال الفينيق', nameAr: 'أطلال الفينيق', nameEn: 'Phoenix Ruins', icon: '🏺', color: '#b45309' },
+            { name: 'سماء الفردوس', nameAr: 'سماء الفردوس', nameEn: 'Paradise Sky', icon: '🌈', color: '#f43f5e' },
+            { name: 'بحر الأساطير', nameAr: 'بحر الأساطير', nameEn: 'Mythic Sea', icon: '⛵', color: '#0284c7' },
+            { name: 'جزيرة الخلود', nameAr: 'جزيرة الخلود', nameEn: 'Immortal Isle', icon: '🏝️', color: '#14b8a6' },
+            { name: 'قمة الأولمب', nameAr: 'قمة الأولمب', nameEn: 'Olympus Peak', icon: '⚡', color: '#eab308' },
+            { name: 'واحة السلام', nameAr: 'واحة السلام', nameEn: 'Peace Oasis', icon: '🕊️', color: '#6ee7b7' },
+            { name: 'فجر الأبدية', nameAr: 'فجر الأبدية', nameEn: 'Eternal Dawn', icon: '🌅', color: '#f43f5e' },
+            { name: 'بوابة اللانهاية', nameAr: 'بوابة اللانهاية', nameEn: 'Infinity Gate', icon: '♾️', color: '#8b5cf6' },
+            { name: 'نقطة التفرد', nameAr: 'نقطة التفرد', nameEn: 'Singularity', icon: '🎯', color: '#ef4444' },
+            { name: 'شعلة الأزل', nameAr: 'شعلة الأزل', nameEn: 'Prime Flame', icon: '🕯️', color: '#f59e0b' },
+            { name: 'شفق الخلود', nameAr: 'شفق الخلود', nameEn: 'Immortal Twilight', icon: '🌆', color: '#ec4899' },
+            { name: 'مدار النور', nameAr: 'مدار النور', nameEn: 'Light Orbit', icon: '💫', color: '#38bdf8' },
+            { name: 'كوكب الأحلام', nameAr: 'كوكب الأحلام', nameEn: 'Dream Planet', icon: '🪐', color: '#a855f7' },
+            { name: 'إشعاع النبض', nameAr: 'إشعاع النبض', nameEn: 'Pulse Flare', icon: '🔆', color: '#fbbf24' },
+            { name: 'قلب الوجود', nameAr: 'قلب الوجود', nameEn: 'Heart of Cosmos', icon: '💖', color: '#f43f5e' },
+            { name: 'عرش النجوم', nameAr: 'عرش النجوم', nameEn: 'Astral Throne', icon: '🌟', color: '#ffd700' },
+            { name: 'تاج الكواكب', nameAr: 'تاج الكواكب', nameEn: 'Crown of Worlds', icon: '👑', color: '#a855f7' },
+            { name: 'أفق الأوميغا', nameAr: 'أفق الأوميغا', nameEn: 'Omega Horizon', icon: '⚡', color: '#ff0055' }
         ];
     }
 
@@ -119,12 +119,14 @@ class WorldCatalog {
         return 100;
     }
 
-    static getWorld(worldIndex) {
+    static getWorld(worldIndex, lang = null) {
         const idx = Math.min(99, Math.max(0, worldIndex));
         const list = this.getDistinctWorlds();
         const world = list[idx];
         const startLevel = idx * 50 + 1;
         const endLevel = (idx + 1) * 50;
+        const isAr = (lang || (typeof window !== 'undefined' && window.storageManager?.data?.settings?.lang) || 'ar') === 'ar';
+        const name = isAr ? world.name : (world.nameEn || world.name);
 
         return {
             id: `world_${idx + 1}`,
@@ -132,10 +134,12 @@ class WorldCatalog {
             worldNumber: idx + 1,
             startLevel,
             endLevel,
-            name: world.name,
+            name: name,
+            nameAr: world.name,
+            nameEn: world.nameEn || world.name,
             icon: world.icon,
             color: world.color,
-            displayName: `${world.icon} ${world.name}`
+            displayName: `${world.icon} ${name}`
         };
     }
 
@@ -157,7 +161,7 @@ class WorldCatalog {
 // Pure Full-Grid Cyber Matrix (Shapes removed per user request)
 class ShapeCatalog {
     static getShapeForLevel(level) {
-        return { type: 'grid', name: 'شبكة نيون كاملة', icon: '⚡' };
+        return { type: 'grid', name: 'شبكة نيون كاملة', nameAr: 'شبكة نيون كاملة', nameEn: 'Full Neon Grid', icon: '⚡' };
     }
 
     static createMask(shapeType, rows, cols) {
@@ -496,7 +500,7 @@ class LevelGenerator {
             rows,
             cols,
             size: Math.max(rows, cols),
-            shapeInfo: { type: 'grid', name: 'شبكة نيون كاملة', icon: '⚡' },
+            shapeInfo: { type: 'grid', name: 'شبكة نيون كاملة', nameAr: 'شبكة نيون كاملة', nameEn: 'Full Neon Grid', icon: '⚡' },
             mask,
             arrows: prunedArrows,
             totalArrows: prunedArrows.length,
@@ -593,7 +597,7 @@ class LevelGenerator {
             rows,
             cols,
             size: Math.max(rows, cols),
-            shapeInfo: { type: 'grid', name: 'شبكة نيون كاملة', icon: '⚡' },
+            shapeInfo: { type: 'grid', name: 'شبكة نيون كاملة', nameAr: 'شبكة نيون كاملة', nameEn: 'Full Neon Grid', icon: '⚡' },
             mask,
             arrows,
             totalArrows: arrows.length,
@@ -632,12 +636,13 @@ class LevelGenerator {
         });
 
         // 6 Progressive Difficulty Tiers scaled smoothly across 5000 levels
-        if (levelNumber <= 25) level.difficulty = { name: 'متدرب', tier: 1, icon: '🟢', color: '#00ff66' };
-        else if (levelNumber <= 150) level.difficulty = { name: 'متقدم', tier: 2, icon: '🟡', color: '#ffea00' };
-        else if (levelNumber <= 600) level.difficulty = { name: 'محترف', tier: 3, icon: '🟠', color: '#ff9500' };
-        else if (levelNumber <= 1500) level.difficulty = { name: 'خبير', tier: 4, icon: '🔴', color: '#ff3b30' };
-        else if (levelNumber <= 3500) level.difficulty = { name: 'أسطوري', tier: 5, icon: '🟣', color: '#b026ff' };
-        else level.difficulty = { name: 'أوميغا (مستحيل)', tier: 6, icon: '⚡', color: '#ff0055' };
+        const isArDiff = (typeof window !== 'undefined' && window.storageManager?.data?.settings?.lang === 'ar');
+        if (levelNumber <= 25) level.difficulty = { name: isArDiff ? 'متدرب' : 'Apprentice', nameAr: 'متدرب', nameEn: 'Apprentice', tier: 1, icon: '🟢', color: '#00ff66' };
+        else if (levelNumber <= 150) level.difficulty = { name: isArDiff ? 'متقدم' : 'Advanced', nameAr: 'متقدم', nameEn: 'Advanced', tier: 2, icon: '🟡', color: '#ffea00' };
+        else if (levelNumber <= 600) level.difficulty = { name: isArDiff ? 'محترف' : 'Pro', nameAr: 'محترف', nameEn: 'Pro', tier: 3, icon: '🟠', color: '#ff9500' };
+        else if (levelNumber <= 1500) level.difficulty = { name: isArDiff ? 'خبير' : 'Expert', nameAr: 'خبير', nameEn: 'Expert', tier: 4, icon: '🔴', color: '#ff3b30' };
+        else if (levelNumber <= 3500) level.difficulty = { name: isArDiff ? 'أسطوري' : 'Legendary', nameAr: 'أسطوري', nameEn: 'Legendary', tier: 5, icon: '🟣', color: '#b026ff' };
+        else level.difficulty = { name: isArDiff ? 'أوميغا (مستحيل)' : 'Omega (Impossible)', nameAr: 'أوميغا (مستحيل)', nameEn: 'Omega (Impossible)', tier: 6, icon: '⚡', color: '#ff0055' };
 
         const sol = this.fastFindEscapeSequence(level.arrows, level.rows || level.size, level.cols || level.size);
         if (sol && sol.sequence && sol.sequence.length >= 6) {

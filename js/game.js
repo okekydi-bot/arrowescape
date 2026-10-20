@@ -80,6 +80,7 @@ class GameManager {
             this.elapsedSeconds = this.timeLimit;
         }
 
+        this.applyWorldBackground(this.levelData.worldInfo);
         this.startTimer();
         this.renderGameplayUI();
         this.renderBoard();
@@ -90,6 +91,35 @@ class GameManager {
         const storage = window.storageManager;
         storage.data.stats.totalRotations = storage.data.stats.totalRotations || 0;
         storage.save();
+    }
+
+    applyWorldBackground(worldInfo) {
+        const screenGame = document.getElementById('screen-game');
+        if (!screenGame) return;
+
+        const info = worldInfo || (window.WorldCatalog ? window.WorldCatalog.getWorldForLevel(this.currentLevel || 1) : null);
+        const hex = (info && info.color) || '#00f3ff';
+
+        const h = hex.replace('#', '');
+        const n = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16) || 0x00f3ff;
+        const r = (n >> 16) & 255;
+        const g = (n >> 8) & 255;
+        const b = n & 255;
+
+        // Rich atmospheric cosmic gradient matching the current world:
+        const ambientR = Math.round(r * 0.16);
+        const ambientG = Math.round(g * 0.16);
+        const ambientB = Math.round(b * 0.16);
+
+        const deepR = Math.round(r * 0.07);
+        const deepG = Math.round(g * 0.07);
+        const deepB = Math.round(b * 0.07);
+
+        const worldBg = `radial-gradient(circle at 50% 34%, rgba(${r}, ${g}, ${b}, 0.22) 0%, rgba(${ambientR}, ${ambientG}, ${ambientB}, 0.80) 45%, rgba(${deepR}, ${deepG}, ${deepB}, 0.95) 75%, #04060c 100%)`;
+
+        screenGame.style.setProperty('--game-world-bg', worldBg);
+        screenGame.style.background = worldBg;
+        screenGame.style.setProperty('--world-color', hex);
     }
 
     startTimer() {
@@ -123,15 +153,20 @@ class GameManager {
         const lvlEl = document.getElementById('hud-level-number');
         if (lvlEl) lvlEl.textContent = this.currentLevel;
 
+        const isAr = (window.storageManager?.data?.settings?.lang === 'ar');
         const isBoss = !!(this.levelData && this.levelData.isBoss);
         const bossBanner = document.getElementById('hud-boss-banner');
         if (bossBanner) {
+            bossBanner.innerHTML = isAr 
+                ? '<span>👑</span> <span>مرحلة الزعيم الملكي! (+25 🪙 مكافأة)</span>' 
+                : '<span>👑</span> <span>Royal Boss Level! (+25 🪙 Bonus)</span>';
             bossBanner.style.display = isBoss ? 'flex' : 'none';
         }
 
         const worldBadge = document.getElementById('hud-world-badge');
         if (worldBadge && this.levelData && this.levelData.worldInfo) {
-            worldBadge.innerHTML = `${this.levelData.worldInfo.icon} ${this.levelData.worldInfo.name}`;
+            const wName = isAr ? (this.levelData.worldInfo.nameAr || this.levelData.worldInfo.name) : (this.levelData.worldInfo.nameEn || this.levelData.worldInfo.name);
+            worldBadge.innerHTML = `${this.levelData.worldInfo.icon} ${wName}`;
             worldBadge.style.display = 'inline-flex';
             if (this.levelData.worldInfo.color) {
                 worldBadge.style.color = this.levelData.worldInfo.color;
@@ -141,17 +176,13 @@ class GameManager {
 
         const diffBadge = document.getElementById('hud-difficulty-badge');
         if (diffBadge && this.levelData && this.levelData.difficulty) {
-            diffBadge.innerHTML = `${this.levelData.difficulty.icon} ${this.levelData.difficulty.name}`;
+            const dName = isAr ? (this.levelData.difficulty.nameAr || this.levelData.difficulty.name) : (this.levelData.difficulty.nameEn || this.levelData.difficulty.name);
+            diffBadge.innerHTML = `${this.levelData.difficulty.icon} ${dName}`;
             diffBadge.style.display = 'inline-flex';
             if (this.levelData.difficulty.color) {
                 diffBadge.style.color = this.levelData.difficulty.color;
                 diffBadge.style.borderColor = this.levelData.difficulty.color;
             }
-        }
-
-        const shapeBadge = document.getElementById('hud-shape-badge');
-        if (shapeBadge) {
-            shapeBadge.style.display = 'none';
         }
 
         const isChallenge = (this.gameMode === 'challenge');
@@ -161,13 +192,7 @@ class GameManager {
             timerBadge.classList.remove('urgent-timer');
         }
 
-        const targetEl = document.getElementById('hud-target-moves');
-        if (targetEl) targetEl.textContent = this.levelData.totalArrows;
-
-        const movesEl = document.getElementById('hud-moves');
-        if (movesEl) movesEl.textContent = this.escapedArrowsCount;
-
-        this.updateScoreUI();
+        this.updateBadges();
     }
 
     updateTimerUI() {
@@ -190,7 +215,7 @@ class GameManager {
             }
         }
 
-        const gameScreen = document.getElementById('game-screen');
+        const gameScreen = document.getElementById('screen-game');
         if (gameScreen) {
             if (this.gameMode === 'challenge' && this.elapsedSeconds <= 10) {
                 gameScreen.classList.add('ambient-alarm-pulse');
@@ -201,10 +226,7 @@ class GameManager {
     }
 
     updateScoreUI() {
-        const scoreEl = document.getElementById('hud-score');
-        if (!scoreEl) return;
-        const base = Math.max(100, 10000 + (this.escapedArrowsCount * 350) - (this.mistakes * 500));
-        scoreEl.textContent = base.toLocaleString();
+        // Safe no-op: HUD displays stars and tactical IQ
     }
 
     updateStarsUI() {
@@ -241,12 +263,6 @@ class GameManager {
     }
 
     updateProgressUI() {
-        const total = this.levelData ? this.levelData.totalArrows : 1;
-        const percent = Math.min(100, Math.round((this.escapedArrowsCount / Math.max(1, total)) * 100));
-
-        const bar = document.getElementById('hud-progress-bar');
-        if (bar) bar.style.width = `${percent}%`;
-
         // Update 3 Stars live indicators
         this.updateStarsUI();
     }
@@ -266,7 +282,7 @@ class GameManager {
         const cellSize = this.cellSize;
         const width = cols * cellSize;
         const height = rows * cellSize;
-        const dotRadius = Math.max(1.6, Math.round(cellSize * 0.020 * 10) / 10);
+        const dotRadius = Math.max(2.4, Math.round(cellSize * 0.032 * 10) / 10);
         // Draw Matrix Dots tinted with the current world's signature color
         const worldColor = (this.levelData.worldInfo && this.levelData.worldInfo.color) || 'var(--neon-cyan)';
         const boardEl = document.getElementById('puzzle-grid');
@@ -277,7 +293,7 @@ class GameManager {
             for (let c = 0; c < cols; c++) {
                 const cx = (c + 0.5) * cellSize;
                 const cy = (r + 0.5) * cellSize;
-                dotsSvg += `<circle cx="${cx}" cy="${cy}" r="${dotRadius}" fill="${worldColor}" opacity="0.45"/>`;
+                dotsSvg += `<circle cx="${cx}" cy="${cy}" r="${dotRadius}" fill="${worldColor}" opacity="0.75"/>`;
             }
         }
 
@@ -574,13 +590,13 @@ class GameManager {
     generateArrowSVG(arrow, cellSize, opts = {}) {
         const segs = arrow.segments;
         const isCyan = (arrow.color === 'cyan');
-        const colorVar = isCyan ? 'var(--neon-cyan)' : 'var(--neon-orange)';
+        const colorVar = isCyan ? 'var(--arrow-color-a)' : 'var(--arrow-color-b)';
         const filterId = opts.noFilter ? 'none' : (isCyan ? 'url(#maze-cyan-glow)' : 'url(#maze-orange-glow)');
         const activeSkin = opts.head || (window.storageManager && window.storageManager.data.activeArrowHead) || 'classic';
         const bodyStyle = opts.body || (window.storageManager && window.storageManager.data.activeArrowBody) || 'tube';
 
         // Refined slimmer arrow dimensions per user request ("صغر حجم السهم اضعف قليل"):
-        const altColor = isCyan ? 'var(--neon-orange)' : 'var(--neon-cyan)';
+        const altColor = isCyan ? 'var(--arrow-color-b)' : 'var(--arrow-color-a)';
         const bodyScale = { snake: 1.35, worm: 1.45, beads: 0.4, rope: 1.1, hollow: 1.25, double: 1.4, caterpillar: 0.4, chain: 1.2, laser: 0.55, zebra: 1.2, rainbow: 1.2 }[bodyStyle] || 1;
         const baseBodyWidth = Math.max(6, Math.round(cellSize * 0.13)); // 13% of cell: refined & slimmer
         const bodyWidth = Math.max(3, Math.round(baseBodyWidth * bodyScale));
@@ -1059,18 +1075,31 @@ class GameManager {
 
     updateBadges() {
         const storage = window.storageManager;
+        if (!storage || !storage.data) return;
         const hintBadge = document.getElementById('btn-hint-badge');
-        if (hintBadge) hintBadge.textContent = storage.data.hints !== undefined ? storage.data.hints : 2;
+        if (hintBadge) {
+            const h = (storage.data.hints !== undefined) ? storage.data.hints : 0;
+            hintBadge.textContent = h;
+            hintBadge.classList.toggle('has-booster', h > 0);
+        }
         const laserBadge = document.getElementById('btn-laser-badge');
-        if (laserBadge) laserBadge.textContent = storage.data.lasers !== undefined ? storage.data.lasers : 2;
+        if (laserBadge) {
+            const l = (storage.data.lasers !== undefined) ? storage.data.lasers : 0;
+            laserBadge.textContent = l;
+            laserBadge.classList.toggle('has-booster', l > 0);
+        }
         const xrayBadge = document.getElementById('btn-xray-badge');
-        if (xrayBadge) xrayBadge.textContent = storage.data.xrays !== undefined ? storage.data.xrays : 1;
+        if (xrayBadge) {
+            const x = (storage.data.xrays !== undefined) ? storage.data.xrays : 0;
+            xrayBadge.textContent = x;
+            xrayBadge.classList.toggle('has-booster', x > 0);
+        }
     }
 
     activateLaserBooster() {
         if (this.isGameOver || this.isLevelComplete || this.isPaused) return;
         const storage = window.storageManager;
-        const lasers = storage.data.lasers !== undefined ? storage.data.lasers : 2;
+        const lasers = storage.data.lasers !== undefined ? storage.data.lasers : 0;
         if (lasers <= 0) {
             // Player ran out of laser zaps: prompt to watch ad per user requirement
             window.uiController.showAdOfferModal('laser');
@@ -1114,8 +1143,6 @@ class GameManager {
 
         this.escapedArrowsCount++;
         window.storageManager.incrementArrowsReleased();
-        const movesEl = document.getElementById('hud-moves');
-        if (movesEl) movesEl.textContent = this.escapedArrowsCount;
 
         this.updateProgressUI();
         this.updateScoreUI();
@@ -1209,7 +1236,7 @@ class GameManager {
 
         if (this.comboCount >= 2) {
             window.storageManager.data.stats.bestCombo = Math.max(window.storageManager.data.stats.bestCombo || 0, this.comboCount);
-            this.showComboEffect(this.comboCount);
+            this.showComboEffect(this.comboCount, arrow, arrowEl);
             window.soundEngine.playCombo(this.comboCount);
             // Award combo rush bonus coins
             const bonusCoins = Math.min(5, this.comboCount - 1);
@@ -1219,9 +1246,6 @@ class GameManager {
                 window.storageManager.updateMissionProgress('combos', this.comboCount);
             }
         }
-
-        const movesEl = document.getElementById('hud-moves');
-        if (movesEl) movesEl.textContent = this.escapedArrowsCount;
 
         // Play smooth snake slither escape animation
         this.animateArrowSlitherEscape(arrow, arrowEl);
@@ -1292,8 +1316,6 @@ class GameManager {
                     if (targetEl.parentNode) targetEl.parentNode.removeChild(targetEl);
                 }, 400);
                 this.escapedArrowsCount++;
-                const movesEl = document.getElementById('hud-moves');
-                if (movesEl) movesEl.textContent = this.escapedArrowsCount;
             }
         }
 
@@ -1341,45 +1363,111 @@ class GameManager {
         }
     }
 
-    showComboEffect(comboCount) {
+    showComboEffect(comboCount, arrow = null, arrowEl = null) {
         const overlay = document.getElementById('combo-display-overlay');
         if (!overlay) return;
-        overlay.innerHTML = '';
 
         const badge = document.createElement('div');
-        badge.className = `combo-floating-badge ${comboCount >= 3 ? 'combo-fire' : ''}`;
-
         const isAr = (window.storageManager && window.storageManager.data.settings.lang === 'ar');
-        let label = `x${comboCount} COMBO!`;
+
+        // Select purely celebratory/praise words (NO "combo", NO "x2" numbers)
+        let label = '';
         if (isAr) {
-            if (comboCount === 2) label = `🔥 كومبو x2!`;
-            else if (comboCount === 3) label = `⚡ كومبو ناري x3! 🔥`;
-            else if (comboCount === 4) label = `💥 كومبو مدمر x4! ⚡`;
-            else label = `🌟 كومبو أسطوري x${comboCount}! 🌟`;
+            if (comboCount === 2) {
+                const words = ['رائع! ✨', 'ممتاز! 🎯', 'ذكي! 💡', 'أحسنت! 👏'];
+                label = words[Math.floor(Math.random() * words.length)];
+            } else if (comboCount === 3) {
+                const words = ['مذهل! 🔥', 'فنان! 🎨', 'سريع جداً! ⚡', 'رائع جداً! 💫'];
+                label = words[Math.floor(Math.random() * words.length)];
+            } else if (comboCount === 4) {
+                const words = ['خرافي! 💥', 'إبداع! 🚀', 'عبقري! 🧠', 'بطل! 🏆'];
+                label = words[Math.floor(Math.random() * words.length)];
+            } else {
+                const words = ['أسطوري! 🌟', 'لا يُقهر! 👑', 'خارق للعادة! 🌌', 'ملك المتاهات! 👑'];
+                label = words[Math.floor(Math.random() * words.length)];
+            }
         } else {
-            if (comboCount === 2) label = `x2 COMBO! 🔥`;
-            else if (comboCount === 3) label = `x3 ON FIRE! 🔥`;
-            else if (comboCount === 4) label = `x4 INCREDIBLE! ⚡`;
-            else label = `x${comboCount} GODLIKE! 🌟`;
+            if (comboCount === 2) {
+                const words = ['Great! ✨', 'Super! 🎯', 'Smart! 💡', 'Well Done! 👏'];
+                label = words[Math.floor(Math.random() * words.length)];
+            } else if (comboCount === 3) {
+                const words = ['Awesome! 🔥', 'Brilliant! 💫', 'So Fast! ⚡', 'Amazing! 🎨'];
+                label = words[Math.floor(Math.random() * words.length)];
+            } else if (comboCount === 4) {
+                const words = ['Incredible! 💥', 'Genius! 🧠', 'Master! 🚀', 'Champion! 🏆'];
+                label = words[Math.floor(Math.random() * words.length)];
+            } else {
+                const words = ['Legendary! 🌟', 'Unstoppable! 👑', 'Godlike! 🌌', 'Flawless! 👑'];
+                label = words[Math.floor(Math.random() * words.length)];
+            }
         }
 
         badge.textContent = label;
+        let styleTier = '';
+        if (comboCount >= 5) styleTier = 'legendary';
+        else if (comboCount >= 3) styleTier = 'fire';
+        badge.className = `praise-floating-badge ${styleTier}`;
+
+        // Compute location of the escaping arrow on the phone screen
+        const screenGame = document.getElementById('screen-game') || overlay.parentElement;
+        const screenRect = screenGame ? screenGame.getBoundingClientRect() : { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
+
+        let targetX = screenRect.width / 2;
+        let targetY = screenRect.height * 0.35;
+
+        // 1. Try DOM element bounding box of the arrow
+        let foundPos = false;
+        if (arrowEl && typeof arrowEl.getBoundingClientRect === 'function') {
+            const elRect = arrowEl.getBoundingClientRect();
+            if (elRect.width > 0 && elRect.height > 0) {
+                targetX = (elRect.left + elRect.width / 2) - screenRect.left;
+                targetY = (elRect.top + elRect.height / 2) - screenRect.top;
+                foundPos = true;
+            }
+        }
+
+        // 2. Fallback to calculating from grid cell coordinates of the arrow segments
+        if (!foundPos && arrow && arrow.segments && arrow.segments.length > 0) {
+            const puzzleGrid = document.getElementById('puzzle-grid');
+            if (puzzleGrid) {
+                const gridRect = puzzleGrid.getBoundingClientRect();
+                const rows = (this.levelData && (this.levelData.rows || this.levelData.size)) || 6;
+                const cols = (this.levelData && (this.levelData.cols || this.levelData.size)) || 6;
+                const avgR = arrow.segments.reduce((s, seg) => s + seg.r, 0) / arrow.segments.length;
+                const avgC = arrow.segments.reduce((s, seg) => s + seg.c, 0) / arrow.segments.length;
+                const absX = gridRect.left + (avgC + 0.5) * (gridRect.width / cols);
+                const absY = gridRect.top + (avgR + 0.5) * (gridRect.height / rows);
+                targetX = absX - screenRect.left;
+                targetY = absY - screenRect.top;
+            }
+        }
+
+        // 3. Strictly clamp within the phone screen boundary (never overflow edges, HUD or boosters)
+        const paddingX = 85;      // Safe margin from phone screen left/right
+        const topMargin = 95;     // Safe margin below top HUD
+        const bottomMargin = 110; // Safe margin above bottom booster bar
+        const clampedX = Math.max(paddingX, Math.min(screenRect.width - paddingX, targetX));
+        const clampedY = Math.max(topMargin, Math.min(screenRect.height - bottomMargin, targetY));
+
+        badge.style.left = `${Math.round(clampedX)}px`;
+        badge.style.top = `${Math.round(clampedY)}px`;
+
         overlay.appendChild(badge);
 
-        // Ambient reactive glow on game screen during high combo streaks
-        const container = document.querySelector('.game-board-container') || document.getElementById('game-screen');
-        if (container) {
+        // Ambient reactive glow on game screen during high streaks
+        const container = document.querySelector('.puzzle-board-container') || screenGame;
+        if (container && comboCount >= 3) {
             container.classList.remove('ambient-combo-glow-fire');
             void container.offsetWidth;
             container.classList.add('ambient-combo-glow-fire');
             setTimeout(() => {
                 if (container) container.classList.remove('ambient-combo-glow-fire');
-            }, 2200);
+            }, 1800);
         }
 
         setTimeout(() => {
-            if (badge.parentNode) badge.remove();
-        }, 950);
+            if (badge.parentNode) badge.parentNode.removeChild(badge);
+        }, 920);
     }
 
     // Snake Slither Escape Animation: Arrow body glides through every corner and bend along its own track!
@@ -1586,9 +1674,6 @@ class GameManager {
 
         if (this.escapedArrowsCount > 0) this.escapedArrowsCount--;
 
-        const movesEl = document.getElementById('hud-moves');
-        if (movesEl) movesEl.textContent = this.escapedArrowsCount;
-
         window.soundEngine.playClick();
         this.renderBoard();
         this.updateProgressUI();
@@ -1611,9 +1696,6 @@ class GameManager {
                 this.activeCells.set(`${seg.r},${seg.c}`, a.id);
             });
         });
-
-        const movesEl = document.getElementById('hud-moves');
-        if (movesEl) movesEl.textContent = this.escapedArrowsCount;
 
         window.soundEngine.playClick();
         this.renderBoard();
@@ -1782,7 +1864,7 @@ class GameManager {
     activateXRayVision() {
         if (this.isGameOver || this.isLevelComplete || this.isPaused) return;
         const storage = window.storageManager;
-        const xrays = storage.data.xrays !== undefined ? storage.data.xrays : 1;
+        const xrays = storage.data.xrays !== undefined ? storage.data.xrays : 0;
         if (xrays <= 0) {
             window.uiController.showAdOfferModal('xray');
             return;
@@ -1909,6 +1991,10 @@ class GameManager {
         this.isLevelComplete = true;
         this.stopTimer();
 
+        // User requirement: Reset unused boosters (Hint, Laser, Hawk Eye) to 0 upon winning level
+        window.storageManager.resetBoostersToZero();
+        this.updateBadges();
+
         const isBoss = !!(this.levelData && this.levelData.isBoss);
         if (isBoss) {
             window.soundEngine.playBossWin();
@@ -1971,13 +2057,20 @@ class GameManager {
         const currentTotalSolved = window.storageManager.data.stats.totalPuzzlesSolved || 0;
         if (currentTotalSolved > 0 && currentTotalSolved % 100 === 0) {
             const nextMult = Math.pow(2, Math.floor(currentTotalSolved / 100));
+            const isAr = (window.storageManager && window.storageManager.data.settings.lang === 'ar');
             setTimeout(() => {
-                window.uiController.showToast(`🎉 إنجاز أسطوري! أتممت ${currentTotalSolved} مرحلة وتضاعفت الكوينز إلى x${nextMult}!`);
+                window.uiController.showToast(isAr
+                    ? `🎉 إنجاز أسطوري! أتممت ${currentTotalSolved} مرحلة وتضاعفت الكوينز إلى x${nextMult}!`
+                    : `🎉 Legendary Milestone! Completed ${currentTotalSolved} stages, coins multiplied x${nextMult}!`);
             }, 1200);
         }
 
         if (window.storageManager && typeof window.storageManager.updateMissionProgress === 'function') {
             window.storageManager.updateMissionProgress('levels', 1);
+            window.storageManager.updateMissionProgress('stars', stars);
+            if (stars === 3) {
+                window.storageManager.updateMissionProgress('perfect', 1);
+            }
         }
 
         window.uiController.checkAchievements();

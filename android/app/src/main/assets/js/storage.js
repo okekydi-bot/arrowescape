@@ -1,4 +1,26 @@
 // Persistent Local Storage Management for Arrow Escape
+function getSystemLanguage() {
+    try {
+        let lang = '';
+        if (typeof window !== 'undefined') {
+            if (window.AndroidNative && typeof window.AndroidNative.getDeviceLanguage === 'function') {
+                lang = window.AndroidNative.getDeviceLanguage();
+            } else if (navigator.languages && navigator.languages.length) {
+                lang = navigator.languages[0];
+            } else if (navigator.language) {
+                lang = navigator.language;
+            }
+        }
+        if (lang) {
+            const clean = lang.toLowerCase();
+            return clean.startsWith('ar') ? 'ar' : 'en';
+        }
+    } catch (e) {
+        console.warn('Language detection error:', e);
+    }
+    return 'ar';
+}
+
 class StorageManager {
     constructor() {
         this.STORAGE_KEY = 'arrow_escape_save_v1';
@@ -24,10 +46,10 @@ class StorageManager {
             currentLevel: 1,
             maxUnlockedLevel: 1,
             levelRecords: {}, // { [level]: { stars: 3, bestMoves: 12, bestScore: 9800, bestTime: 45 } }
-            coins: 50,
-            hints: 1,
-            lasers: 1,
-            xrays: 1,
+            coins: 0,
+            hints: 0,
+            lasers: 0,
+            xrays: 0,
             selectedTheme: 'cyber',
             unlockedThemes: ['cyber'],
             activeArrowHead: 'classic',
@@ -53,11 +75,14 @@ class StorageManager {
                 mistakesCount: 0,
                 bestCombo: 0
             },
+            playerName: 'لاعب السهم',
+            nameChangeCount: 0,
             settings: {
                 sound: true,
                 music: false,
                 vibration: true,
-                lang: 'ar', // Default Arabic per prompt
+                lang: getSystemLanguage(),
+                hasManualLangChoice: false,
                 simulatedDeviceFrame: false // Borderless clean view
             }
         };
@@ -97,13 +122,31 @@ class StorageManager {
             data.activeArrowTrail = data.activeArrowTrail || 'neon';
             data.unlockedArrowTrails = data.unlockedArrowTrails || ['neon'];
             data.activeArrowBody = data.activeArrowBody || 'tube';
-            data.unlockedArrowBodies = data.unlockedArrowBodies || ['tube'];
-            if (data.xrays === undefined) data.xrays = 1;
+            // Migration v14 & v15 per user request:
+            // Zero out hints, lasers, xrays for all players
+            if (!data.v15ZeroBoostersOnStart) {
+                data.v15ZeroBoostersOnStart = true;
+                data.hints = 0;
+                data.lasers = 0;
+                data.xrays = 0;
+            }
+
+            if (data.hints === undefined) data.hints = 0;
+            if (data.lasers === undefined) data.lasers = 0;
+            if (data.xrays === undefined) data.xrays = 0;
             if (!data.stats) {
                 data.stats = { totalPuzzlesSolved: 0, totalStars: 0, totalRotations: 0, totalArrowsReleased: 0, mistakesCount: 0, bestCombo: 0 };
             }
             if (data.stats.mistakesCount === undefined) data.stats.mistakesCount = 0;
             if (data.stats.bestCombo === undefined) data.stats.bestCombo = 0;
+
+            if (!data.settings) {
+                data.settings = this.getDefaults().settings;
+            }
+            // Auto-detect device language if user hasn't explicitly locked in a manual choice
+            if (!data.settings.hasManualLangChoice) {
+                data.settings.lang = getSystemLanguage();
+            }
 
             return data;
         } catch (e) {
@@ -159,10 +202,14 @@ class StorageManager {
     }
 
     renewLevelResources() {
-        // Each level renews with exactly 1 Hint, 1 Laser Zap, and 1 X-Ray Vision per user requirement
-        this.data.hints = 1;
-        this.data.lasers = 1;
-        this.data.xrays = 1;
+        // Boosters start at 0 per level per user requirement
+        this.resetBoostersToZero();
+    }
+
+    resetBoostersToZero() {
+        this.data.hints = 0;
+        this.data.lasers = 0;
+        this.data.xrays = 0;
         this.save();
     }
 
@@ -254,7 +301,7 @@ class StorageManager {
     }
 
     useLaser() {
-        this.data.lasers = this.data.lasers !== undefined ? this.data.lasers : 2;
+        this.data.lasers = this.data.lasers !== undefined ? this.data.lasers : 0;
         if (this.data.lasers > 0) {
             this.data.lasers--;
             this.save();
@@ -276,7 +323,7 @@ class StorageManager {
     }
 
     useXRay() {
-        this.data.xrays = this.data.xrays !== undefined ? this.data.xrays : 1;
+        this.data.xrays = this.data.xrays !== undefined ? this.data.xrays : 0;
         if (this.data.xrays > 0) {
             this.data.xrays--;
             this.save();
@@ -289,6 +336,10 @@ class StorageManager {
         this.data.xrays = (this.data.xrays || 0) + amount;
         this.save();
         return this.data.xrays;
+    }
+
+    addXrays(amount) {
+        return this.addXRays(amount);
     }
 
     unlockTheme(themeId) {
@@ -456,15 +507,108 @@ class StorageManager {
         return this.data.challengeTrophies !== undefined ? this.data.challengeTrophies : Math.max(0, this.getChallengeStage() - 1);
     }
 
+    generateRandomDailyMissions(dateStr) {
+        let hash = 0;
+        for (let i = 0; i < dateStr.length; i++) {
+            hash = ((hash << 5) - hash) + dateStr.charCodeAt(i);
+            hash |= 0;
+        }
+        let seed = Math.abs(hash) + 12345;
+        function rnd() {
+            seed = (seed * 9301 + 49297) % 233280;
+            return seed / 233280;
+        }
+        function choose(arr) {
+            return arr[Math.floor(rnd() * arr.length)];
+        }
+
+        const archetypes = [
+            {
+                type: 'arrows',
+                icon: '🏹',
+                options: [
+                    { target: 25, reward: 25, titleAr: 'أطلق 25 سهماً اليوم', titleEn: 'Release 25 arrows today' },
+                    { target: 40, reward: 35, titleAr: 'أطلق 40 سهماً اليوم', titleEn: 'Release 40 arrows today' },
+                    { target: 60, reward: 50, titleAr: 'أطلق 60 سهماً اليوم', titleEn: 'Release 60 arrows today' },
+                    { target: 80, reward: 65, titleAr: 'أطلق 80 سهماً اليوم', titleEn: 'Release 80 arrows today' }
+                ]
+            },
+            {
+                type: 'levels',
+                icon: '🏆',
+                options: [
+                    { target: 2, reward: 30, titleAr: 'فز بمرحلتين بنجاح', titleEn: 'Win 2 levels' },
+                    { target: 3, reward: 40, titleAr: 'فز بـ 3 مراحل بنجاح', titleEn: 'Win 3 levels' },
+                    { target: 4, reward: 50, titleAr: 'فز بـ 4 مراحل بنجاح', titleEn: 'Win 4 levels' },
+                    { target: 5, reward: 60, titleAr: 'فز بـ 5 مراحل بنجاح', titleEn: 'Win 5 levels' }
+                ]
+            },
+            {
+                type: 'combos',
+                icon: '⚡',
+                options: [
+                    { target: 3, reward: 35, titleAr: 'حقق كومبو 3x أو أعلى', titleEn: 'Achieve 3x Combo streak' },
+                    { target: 4, reward: 45, titleAr: 'حقق كومبو 4x أو أعلى', titleEn: 'Achieve 4x Combo streak' },
+                    { target: 5, reward: 55, titleAr: 'حقق كومبو 5x أو أعلى', titleEn: 'Achieve 5x Combo streak' }
+                ]
+            },
+            {
+                type: 'stars',
+                icon: '⭐',
+                options: [
+                    { target: 6, reward: 35, titleAr: 'اجمع 6 نجوم من المراحل', titleEn: 'Collect 6 stars from levels' },
+                    { target: 9, reward: 50, titleAr: 'اجمع 9 نجوم من المراحل', titleEn: 'Collect 9 stars from levels' },
+                    { target: 12, reward: 65, titleAr: 'اجمع 12 نجمة من المراحل', titleEn: 'Collect 12 stars from levels' }
+                ]
+            },
+            {
+                type: 'perfect',
+                icon: '🎯',
+                options: [
+                    { target: 1, reward: 35, titleAr: 'فز بمرحلة واحدة بـ 3 نجوم', titleEn: 'Clear 1 level with 3 stars' },
+                    { target: 2, reward: 50, titleAr: 'فز بمرحلتين بـ 3 نجوم', titleEn: 'Clear 2 levels with 3 stars' },
+                    { target: 3, reward: 65, titleAr: 'فز بـ 3 مراحل بـ 3 نجوم', titleEn: 'Clear 3 levels with 3 stars' }
+                ]
+            },
+            {
+                type: 'spins',
+                icon: '🎡',
+                options: [
+                    { target: 1, reward: 30, titleAr: 'أدر عجلة الحظ المحظوظة اليوم', titleEn: 'Spin the Lucky Wheel today' }
+                ]
+            }
+        ];
+
+        const shuffled = archetypes.slice();
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(rnd() * (i + 1));
+            const temp = shuffled[i];
+            shuffled[i] = shuffled[j];
+            shuffled[j] = temp;
+        }
+
+        const selected = shuffled.slice(0, 3);
+        return selected.map((arch, index) => {
+            const opt = choose(arch.options);
+            return {
+                id: `m_${arch.type}_${dateStr}_${index}`,
+                type: arch.type,
+                target: opt.target,
+                current: 0,
+                reward: opt.reward,
+                titleAr: opt.titleAr,
+                titleEn: opt.titleEn,
+                icon: arch.icon,
+                claimed: false
+            };
+        });
+    }
+
     getDailyMissions() {
         const todayStr = new Date().toISOString().slice(0, 10);
         if (!this.data.dailyMissionsDate || this.data.dailyMissionsDate !== todayStr || !this.data.dailyMissions || this.data.dailyMissions.length === 0) {
             this.data.dailyMissionsDate = todayStr;
-            this.data.dailyMissions = [
-                { id: 'm_arrows', type: 'arrows', target: 35, current: 0, reward: 30, titleAr: 'أطلق 35 سهماً اليوم', titleEn: 'Release 35 arrows today', icon: '🏹' },
-                { id: 'm_levels', type: 'levels', target: 3, current: 0, reward: 35, titleAr: 'فز بـ 3 مراحل بنجاح', titleEn: 'Win 3 levels', icon: '🏆' },
-                { id: 'm_combo', type: 'combos', target: 3, current: 0, reward: 40, titleAr: 'حقق كومبو 3x أو أعلى', titleEn: 'Achieve 3x Combo streak', icon: '⚡' }
-            ];
+            this.data.dailyMissions = this.generateRandomDailyMissions(todayStr);
             this.save();
         }
         return this.data.dailyMissions;
@@ -523,54 +667,121 @@ class StorageManager {
     getBrainIQ() {
         const stats = this.data.stats || {};
         const totalSolved = stats.totalPuzzlesSolved || 0;
+        const maxUnlocked = Math.max(0, (this.data.maxUnlockedLevel || 1) - 1);
+        const solved = Math.max(totalSolved, this.data.testMode ? totalSolved : maxUnlocked);
         const bestCombo = stats.bestCombo || 0;
         const totalArrows = stats.totalArrowsReleased || 0;
         const mistakes = stats.mistakesCount || 0;
         const totalStars = this.getTotalStars();
 
-        const base = 100;
-        const solvedBonus = Math.min(45, Math.floor(totalSolved * 0.7));
-        const comboBonus = Math.min(25, bestCombo * 3);
-        const accuracyBonus = totalSolved > 0 
-            ? Math.max(0, Math.min(20, Math.round(20 - (mistakes / Math.max(1, totalSolved)) * 4)))
-            : 10;
-        const starBonus = Math.min(25, Math.floor(totalStars * 0.35));
+        const solvedBonus = Math.floor(solved * 3);
+        const starBonus = Math.floor(totalStars * 2);
+        const comboBonus = Math.min(50, bestCombo * 4);
+        const accuracyPct = totalArrows > 0 
+            ? Math.max(0, Math.min(100, Math.round(((totalArrows - mistakes) / totalArrows) * 100))) 
+            : 100;
+        const accuracyBonus = Math.round((accuracyPct / 100) * 15);
 
-        const iq = Math.round(base + solvedBonus + comboBonus + accuracyBonus + starBonus);
+        const iq = Math.round(solvedBonus + starBonus + comboBonus + accuracyBonus);
 
-        let rankAr = 'مبتدئ واعد';
-        let rankEn = 'Promising Novice';
-        let rankIcon = '🥉';
+        // Tiers configured based on completed levels across all 5000 levels.
+        // Every title is strictly a single word:
+        // 0-24: مبتدئ 🥉
+        // 25-89: تكتيكي 🥈
+        // 90-149: خبير 🥇
+        // 150-199: عبقري 💎
+        // 200-349: أسطورة 👑
+        // Extended ranks scaling smoothly up to 5000 levels:
+        const TIERS = [
+            { min: 5000, max: 5000, ar: 'سرمدي', en: 'Eternal', icon: '🌟', descAr: 'القمة المطلقة - أسطورة المتاهات الأبدية', descEn: 'The Ultimate Apex - Eternal Maze Legend' },
+            { min: 4500, max: 5000, ar: 'خالد', en: 'Immortal', icon: '💫', descAr: 'اسم محفور في تاريخ أساطير اللعبة', descEn: 'A name etched in the game hall of fame' },
+            { min: 4000, max: 4500, ar: 'زعيم', en: 'Overlord', icon: '🪐', descAr: 'قيادة الصدارة بلا منازع وقوة ذهنية طاغية', descEn: 'Undisputed leader of the ranks' },
+            { min: 3500, max: 4000, ar: 'إمبراطور', en: 'Emperor', icon: '🏰', descAr: 'سيادة مطلقة على عوالم الألغاز والمتاهات', descEn: 'Sovereign ruler of puzzle realms' },
+            { min: 3000, max: 3500, ar: 'مهيب', en: 'Majestic', icon: '🦅', descAr: 'حضور طاغٍ وإنجازات تكتيكية مذهلة', descEn: 'Majestic presence and staggering achievements' },
+            { min: 2500, max: 3000, ar: 'خارق', en: 'Ascended', icon: '🌌', descAr: 'تفوق عقلي يتجاوز الحدود التقليدية', descEn: 'Transcendental mental prowess' },
+            { min: 2000, max: 2500, ar: 'قاهر', en: 'Conqueror', icon: '⚔️', descAr: 'قهر أصعب التحديات والمتاهات المعقدة', descEn: 'Conquering the hardest complex mazes' },
+            { min: 1500, max: 2000, ar: 'فيلسوف', en: 'Sage', icon: '📜', descAr: 'حكمة عميقة وفهم شامل لكافة الأنماط', descEn: 'Deep wisdom and complete pattern understanding' },
+            { min: 1000, max: 1500, ar: 'عملاق', en: 'Titan', icon: '🔱', descAr: 'سيطرة ساحقة وتجاوز المستويات باقتدار', descEn: 'Overwhelming dominance across levels' },
+            { min: 750, max: 1000, ar: 'داهية', en: 'Mastermind', icon: '🔮', descAr: 'حنكة فائقة وتوقع مسارات الأسهم المعقدة', descEn: 'Supreme cunning and predicting arrow trajectories' },
+            { min: 500, max: 750, ar: 'بارع', en: 'Prodigy', icon: '⚡', descAr: 'إتقان متقدم وقدرة مذهلة على المناورة', descEn: 'Advanced mastery and remarkable maneuvering' },
+            { min: 350, max: 500, ar: 'محترف', en: 'Master', icon: '🎖️', descAr: 'أداء نخبوي وخبرة واسعة في حل المتاهات', descEn: 'Elite performance and vast maze experience' },
+            { min: 200, max: 350, ar: 'أسطورة', en: 'Legend', icon: '👑', descAr: 'ذكاء استثنائي وسيطرة كاملة على اللعبة', descEn: 'Exceptional intellect and game mastery' },
+            { min: 150, max: 200, ar: 'عبقري', en: 'Genius', icon: '💎', descAr: 'تخطيط استراتيجي فائق وسرعة بديهة', descEn: 'Strategic brilliance and sharp intuition' },
+            { min: 90, max: 150, ar: 'خبير', en: 'Expert', icon: '🥇', descAr: 'مهارة واحترافية عالية في فك العقد', descEn: 'Mastery and high skill in solving puzzles' },
+            { min: 25, max: 90, ar: 'تكتيكي', en: 'Tactician', icon: '🥈', descAr: 'تحليل ذكي وقدرة على قراءة المسارات', descEn: 'Smart analysis and path reading' },
+            { min: 0, max: 25, ar: 'مبتدئ', en: 'Novice', icon: '🥉', descAr: 'أداء واعد في بداية رحلة المتاهات', descEn: 'Promising start in the maze journey' }
+        ];
 
-        if (iq >= 185) {
-            rankAr = 'أسطورة الذكاء الخارق';
-            rankEn = 'Mythic Prodigy';
-            rankIcon = '👑';
-        } else if (iq >= 160) {
-            rankAr = 'عبقري استراتيجي';
-            rankEn = 'Strategic Genius';
-            rankIcon = '💎';
-        } else if (iq >= 135) {
-            rankAr = 'خبير متاهات';
-            rankEn = 'Maze Master';
-            rankIcon = '🥇';
-        } else if (iq >= 115) {
-            rankAr = 'محلل تكتيكي';
-            rankEn = 'Tactical Analyst';
-            rankIcon = '🥈';
+        let currentTier = TIERS[TIERS.length - 1];
+        let nextTier = null;
+
+        for (let i = 0; i < TIERS.length; i++) {
+            if (solved >= TIERS[i].min) {
+                currentTier = TIERS[i];
+                nextTier = i > 0 ? TIERS[i - 1] : null;
+                break;
+            }
         }
+
+        const rankFloor = currentTier.min;
+        const rankCeil = currentTier.max;
+        const levelsNeeded = Math.max(0, rankCeil - solved);
+        const progressPct = solved >= 5000 
+            ? 100 
+            : Math.max(0, Math.min(100, Math.round(((solved - rankFloor) / Math.max(1, rankCeil - rankFloor)) * 100)));
 
         return {
             iq,
-            rankAr,
-            rankEn,
-            rankIcon,
-            totalSolved,
+            solved,
+            rankAr: currentTier.ar,
+            rankEn: currentTier.en,
+            rankIcon: currentTier.icon,
+            nextRankAr: nextTier ? nextTier.ar : 'القمة المطلقة',
+            nextRankEn: nextTier ? nextTier.en : 'Apex',
+            nextRankIcon: nextTier ? nextTier.icon : '✨',
+            descAr: currentTier.descAr,
+            descEn: currentTier.descEn,
+            pointsNeeded: levelsNeeded,
+            levelsNeeded,
+            progressPct,
+            totalSolved: solved,
             totalStars,
             bestCombo,
             totalArrows,
-            accuracy: totalSolved > 0 ? Math.max(50, Math.min(100, Math.round(100 - (mistakes / Math.max(1, totalSolved * 3)) * 50))) : 100
+            accuracy: accuracyPct
         };
+    }
+
+    getPlayerName() {
+        const isAr = (this.data.settings?.lang === 'ar');
+        if (!this.data.nameChangeCount || this.data.nameChangeCount === 0 || this.data.playerName === 'لاعب السهم' || this.data.playerName === 'Arrow Player') {
+            return isAr ? 'لاعب السهم' : 'Arrow Player';
+        }
+        return this.data.playerName;
+    }
+
+    getNameChangeCost() {
+        const count = this.data.nameChangeCount || 0;
+        return count === 0 ? 0 : 10000;
+    }
+
+    setPlayerName(newName) {
+        if (!newName || typeof newName !== 'string') return false;
+        const trimmed = newName.trim().slice(0, 15);
+        if (!trimmed) return false;
+
+        const cost = this.getNameChangeCost();
+        if (cost > 0) {
+            if ((this.data.coins || 0) < cost) {
+                return false;
+            }
+            this.data.coins -= cost;
+        }
+
+        this.data.playerName = trimmed;
+        this.data.nameChangeCount = (this.data.nameChangeCount || 0) + 1;
+        this.save();
+        return true;
     }
 
     resetProgress() {

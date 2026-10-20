@@ -1,7 +1,6 @@
 /* Gameplay UI, Puzzle Board, Arrow Tiles, Neon Glows, and Animations */
 
 #screen-game {
-    display: none;
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
@@ -10,25 +9,10 @@
     box-sizing: border-box;
     overflow: hidden;
     position: relative;
-    background: radial-gradient(circle at 50% 35%, #0f192f 0%, #070b14 75%);
+    background: var(--game-world-bg, radial-gradient(circle at 50% 35%, #0f192f 0%, #070b14 75%));
     transition: background 0.4s ease;
-}
-
-body.theme-cyber #screen-game {
-    background: radial-gradient(circle at 50% 35%, #0f192f 0%, #070b14 75%);
-}
-
-body.theme-synthwave #screen-game {
-    background: radial-gradient(circle at 50% 35%, #2a0b36 0%, #12051a 75%);
-}
-
-body.theme-matrix #screen-game {
-    background: radial-gradient(circle at 50% 35%, #072a15 0%, #021208 75%);
-}
-
-
-#screen-game.active {
-    display: flex;
+    overscroll-behavior: none;
+    touch-action: none;
 }
 
 /* 1. TOP HUD AREA */
@@ -611,83 +595,119 @@ body.theme-matrix #screen-game {
     position: absolute;
     top: -4px;
     right: 4px;
-    background: linear-gradient(135deg, var(--neon-orange), #ea580c);
-    color: #fff;
-    font-size: 0.62rem;
+    background: rgba(15, 23, 42, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #94a3b8;
+    font-size: 0.64rem;
     font-weight: 900;
     padding: 1px 6px;
+    min-width: 18px;
+    text-align: center;
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(255, 149, 0, 0.6);
-    font-family: var(--font-digit);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+    font-family: var(--font-digit, 'Rajdhani', monospace, sans-serif);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.action-badge.has-booster {
+    background: linear-gradient(135deg, #ff9500, #ea580c);
+    border-color: #fde047;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(255, 149, 0, 0.8), 0 0 12px rgba(255, 149, 0, 0.5);
+    animation: boosterBadgePulse 1.8s infinite ease-in-out;
+}
+
+@keyframes boosterBadgePulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+        box-shadow: 0 3px 14px rgba(255, 149, 0, 0.95), 0 0 16px rgba(255, 149, 0, 0.7);
+    }
 }
 
 
 
 /* ========================================================
-   FLOATING COMBO & STREAK OVERLAY
+   FLOATING PRAISE & CELEBRATION OVERLAY
    ======================================================== */
 .combo-display-overlay {
     position: absolute;
-    top: 25%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    inset: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
     z-index: 200;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    overflow: hidden;
 }
 
+.praise-floating-badge,
 .combo-floating-badge {
-    font-family: var(--font-ar), var(--font-digit), sans-serif;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-ar), var(--font-main), sans-serif;
     font-weight: 900;
     font-size: 1.15rem;
     color: #ffffff;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 6px 18px;
+    padding: 7px 18px;
     border-radius: 25px;
-    background: rgba(15, 23, 42, 0.9);
+    background: rgba(11, 19, 41, 0.94);
     border: 2px solid var(--neon-cyan);
-    box-shadow: 0 0 18px rgba(0, 240, 255, 0.5), inset 0 0 10px rgba(0, 240, 255, 0.25);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.65), inset 0 0 10px rgba(0, 240, 255, 0.3);
     text-shadow: 0 0 10px var(--neon-cyan);
-    animation: comboFloatPop 0.95s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     white-space: nowrap;
-    letter-spacing: 0.5px;
     pointer-events: none;
     backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: praiseFloatPop 0.92s cubic-bezier(0.18, 0.89, 0.32, 1.25) forwards;
+    z-index: 250;
+    direction: rtl;
+    user-select: none;
 }
 
+.praise-floating-badge.fire,
 .combo-floating-badge.combo-fire {
     border-color: #ff9500;
-    background: rgba(26, 11, 7, 0.92);
-    box-shadow: 0 0 25px rgba(255, 149, 0, 0.7), 0 0 45px rgba(255, 59, 48, 0.5), inset 0 0 12px rgba(255, 149, 0, 0.3);
+    background: rgba(28, 12, 5, 0.95);
+    box-shadow: 0 0 25px rgba(255, 149, 0, 0.8), 0 0 45px rgba(255, 59, 48, 0.5), inset 0 0 12px rgba(255, 149, 0, 0.4);
     text-shadow: 0 0 12px #ff9500, 0 0 22px #ff3b30;
     color: #ffffff;
 }
 
-@keyframes comboFloatPop {
+.praise-floating-badge.legendary {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.35), rgba(168, 85, 247, 0.4)), rgba(15, 10, 30, 0.96);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.9), 0 0 50px rgba(168, 85, 247, 0.6), inset 0 0 12px rgba(255, 215, 0, 0.5);
+    text-shadow: 0 0 12px #ffd700, 0 0 24px #c084fc;
+    color: #ffffff;
+    font-size: 1.25rem;
+}
+
+@keyframes praiseFloatPop {
     0% {
         opacity: 0;
-        transform: translateY(20px) scale(0.6);
+        transform: translate(-50%, calc(-50% + 18px)) scale(0.65);
     }
-    20% {
+    18% {
         opacity: 1;
-        transform: translateY(-5px) scale(1.15);
+        transform: translate(-50%, calc(-50% - 6px)) scale(1.15);
     }
-    45% {
-        transform: translateY(-12px) scale(1);
+    35% {
+        transform: translate(-50%, calc(-50% - 14px)) scale(1);
     }
-    80% {
-        opacity: 0.9;
-        transform: translateY(-20px) scale(0.98);
+    75% {
+        opacity: 1;
+        transform: translate(-50%, calc(-50% - 28px)) scale(0.98);
     }
     100% {
         opacity: 0;
-        transform: translateY(-40px) scale(0.85);
+        transform: translate(-50%, calc(-50% - 46px)) scale(0.85);
     }
 }
 
@@ -1077,64 +1097,6 @@ body.theme-matrix #screen-game {
     100% {
         transform: translateY(115vh) translateX(var(--drift-x, 30px)) rotate(720deg);
         opacity: 0;
-    }
-}
-
-/* ==========================================================
-   COMBO RUSH STREAK BADGE (Floating Neon Overlay)
-   ========================================================== */
-.combo-display-overlay {
-    position: absolute;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 99;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.combo-floating-badge {
-    padding: 8px 22px;
-    border-radius: 30px;
-    font-size: 1.35rem;
-    font-weight: 900;
-    color: #ffffff;
-    background: linear-gradient(135deg, rgba(0, 240, 255, 0.95), rgba(138, 43, 226, 0.95));
-    border: 2px solid #ffffff;
-    box-shadow: 0 0 25px rgba(0, 240, 255, 0.8), 0 0 50px rgba(138, 43, 226, 0.5);
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.9), 0 2px 4px rgba(0, 0, 0, 0.8);
-    animation: comboFloatBadge 0.95s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
-    white-space: nowrap;
-}
-
-.combo-floating-badge.combo-fire {
-    background: linear-gradient(135deg, #ff3b30, #ff9500, #ffd700);
-    box-shadow: 0 0 30px rgba(255, 59, 48, 0.9), 0 0 60px rgba(255, 149, 0, 0.6);
-    border-color: #ffd700;
-}
-
-@keyframes comboFloatBadge {
-    0% {
-        opacity: 0;
-        transform: translate3d(0, 25px, 0) scale(0.65);
-    }
-    18% {
-        opacity: 1;
-        transform: translate3d(0, -6px, 0) scale(1.12);
-    }
-    30% {
-        transform: translate3d(0, 0, 0) scale(1);
-    }
-    75% {
-        opacity: 1;
-        transform: translate3d(0, -18px, 0) scale(1.02);
-    }
-    100% {
-        opacity: 0;
-        transform: translate3d(0, -45px, 0) scale(0.85);
     }
 }
 

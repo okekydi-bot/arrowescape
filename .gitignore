@@ -1,0 +1,30 @@
+# Built application files
+*.apk
+*.aab
+
+# Gradle & Android build
+.gradle/
+**/.gradle/
+build/
+**/build/
+*.iml
+.idea/
+**/.idea/
+local.properties
+**/local.properties
+
+# Signing secrets (NEVER commit)
+keystore.properties
+**/keystore.properties
+*.jks
+*.keystore
+
+# OS & Temp
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.png.bak
+scratch/
+test_screen.png
+app_screen.png

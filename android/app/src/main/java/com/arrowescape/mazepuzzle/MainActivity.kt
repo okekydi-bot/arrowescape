@@ -18,6 +18,10 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -36,7 +40,6 @@ import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.OnUserEarnedRewardListener
-import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 
@@ -44,11 +47,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var webView: WebView
     private var adView: AdView? = null
-    private val liveRewardedAdUnitId = "ca-app-pub-9778007569149797/8955285387"
-    private val testRewardedAdUnitId = "ca-app-pub-3940256099942544/5224354917"
+    private var bannerContainer: android.widget.FrameLayout? = null
 
-    private val liveBannerAdUnitId = "ca-app-pub-9778007569149797/1459938748"
-    private val testBannerAdUnitId = "ca-app-pub-3940256099942544/6300978111"
+    // Google AdMob Unit IDs (Official Production Units)
+    private val liveRewardedAdUnitId = "ca-app-pub-5048831317905163/6287691180"
+    private val liveBannerAdUnitId = "ca-app-pub-5048831317905163/3094462344"
 
     private var rewardedAd: RewardedAd? = null
     private var vibrator: Vibrator? = null
@@ -64,28 +67,20 @@ class MainActivity : AppCompatActivity() {
         // Fullscreen immersive mode & keep screen awake during play
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        // Configure Test Device IDs for Emulators & Testing
-        try {
-            val requestConfiguration = RequestConfiguration.Builder()
-                .setTestDeviceIds(listOf(AdRequest.DEVICE_ID_EMULATOR))
-                .build()
-            MobileAds.setRequestConfiguration(requestConfiguration)
-        } catch (e: Exception) {
-            Log.e("AdMob", "Error setting RequestConfiguration", e)
-        }
-
-        // Initialize Google Mobile Ads SDK & load ads once initialization completes
+        // Initialize Google Mobile Ads SDK
         try {
             MobileAds.initialize(this) { initializationStatus ->
                 Log.d("AdMob", "AdMob initialized: ${initializationStatus.adapterStatusMap}")
                 runOnUiThread {
-                    loadRewardedAd()
                     loadBannerAd()
+                    if (liveRewardedAdUnitId.isNotBlank()) loadRewardedAd()
                 }
             }
         } catch (e: Exception) {
             Log.e("AdMob", "Error initializing MobileAds", e)
         }
+
+        setupNetworkMonitoring()
 
         // Native Android Vibrator Setup
         vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -98,39 +93,35 @@ class MainActivity : AppCompatActivity() {
 
         webView = WebView(this)
 
-        // Native Google AdMob Banner Setup (Visible by default at bottom of screen)
-        adView = AdView(this).apply {
-            adUnitId = liveBannerAdUnitId
-            setAdSize(AdSize.BANNER)
-            visibility = View.VISIBLE
-            adListener = object : AdListener() {
-                override fun onAdLoaded() {
-                    Log.d("AdMob", "Live Banner Ad loaded successfully!")
-                }
-                override fun onAdFailedToLoad(error: LoadAdError) {
-                    Log.w("AdMob", "Live Banner failed: code=${error.code}, message=${error.message}. Retrying with test banner...")
-                    loadTestBannerAd()
-                }
-                override fun onAdOpened() {
-                    Log.d("AdMob", "Banner Ad opened")
-                }
-            }
-        }
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        hideSystemUI()
 
         val rootLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
+            setBackgroundColor(android.graphics.Color.parseColor("#070b14"))
+
             addView(webView, LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 0,
                 1.0f
             ))
-            addView(adView, LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ))
+
+            val density = resources.displayMetrics.density
+            val bannerHeightPx = (50 * density).toInt()
+
+            bannerContainer = android.widget.FrameLayout(this@MainActivity).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    bannerHeightPx
+                )
+                setBackgroundColor(android.graphics.Color.parseColor("#070b14"))
+                visibility = View.VISIBLE
+            }
+            addView(bannerContainer)
         }
         setContentView(rootLayout)
-        hideSystemUI()
+
+        loadBannerAd()
 
         configureWebView()
 
@@ -138,9 +129,23 @@ class MainActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 webView.evaluateJavascript(
-                    "if (window.uiController && window.uiController.currentScreen !== 'screen-menu') { window.uiController.showScreen('screen-menu'); true; } else { false; }"
+                    """
+                    (function() {
+                        const activeModal = document.querySelector('.app-modal.active');
+                        if (activeModal) {
+                            activeModal.classList.remove('active');
+                            return 'modal_closed';
+                        }
+                        if (window.uiController && window.uiController.currentScreen !== 'screen-menu') {
+                            window.uiController.showScreen('screen-menu');
+                            return 'screen_back';
+                        }
+                        return 'exit';
+                    })()
+                    """.trimIndent()
                 ) { result ->
-                    if (result != "true") {
+                    val cleanResult = result?.replace("\"", "") ?: "exit"
+                    if (cleanResult == "exit") {
                         finish()
                     }
                 }
@@ -170,11 +175,8 @@ class MainActivity : AppCompatActivity() {
         val settings = webView.settings
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
-        settings.databaseEnabled = true
-        settings.allowFileAccess = true
-        settings.allowContentAccess = true
-        settings.allowFileAccessFromFileURLs = true
-        settings.allowUniversalAccessFromFileURLs = true
+        settings.allowFileAccess = false
+        settings.allowContentAccess = false
         settings.useWideViewPort = true
         settings.loadWithOverviewMode = true
         settings.setSupportZoom(false)
@@ -183,11 +185,12 @@ class MainActivity : AppCompatActivity() {
         settings.mediaPlaybackRequiresUserGesture = false
         settings.cacheMode = WebSettings.LOAD_DEFAULT
 
-        @Suppress("DEPRECATION")
-        settings.setRenderPriority(WebSettings.RenderPriority.HIGH)
-
         // Hardware Acceleration for 60/120fps smooth performance
         webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        webView.overScrollMode = View.OVER_SCROLL_NEVER
+        webView.isVerticalScrollBarEnabled = false
+        webView.isHorizontalScrollBarEnabled = false
+        webView.setBackgroundColor(android.graphics.Color.parseColor("#070b14"))
 
         // Native Kotlin Bridge
         webView.addJavascriptInterface(AndroidGameBridge(), "AndroidNative")
@@ -226,138 +229,211 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         adView?.pause()
+        try { webView.onPause() } catch (_: Exception) {}
         super.onPause()
     }
 
     override fun onResume() {
         super.onResume()
+        try { webView.onResume() } catch (_: Exception) {}
         adView?.resume()
     }
 
     override fun onDestroy() {
         adView?.destroy()
+        try { webView.destroy() } catch (_: Exception) {}
         super.onDestroy()
     }
 
-    private fun loadBannerAd() {
+    private var isBannerLoaded = false
+    private var isBannerLoading = false
+    private var isRewardEarnedForCurrentAd = false
+
+    private fun setupNetworkMonitoring() {
         try {
-            val adRequest = AdRequest.Builder().build()
-            adView?.loadAd(adRequest)
-        } catch (e: Exception) {
-            Log.e("AdMob", "Exception loading banner ad", e)
-        }
-    }
+            val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+            val networkRequest = NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build()
 
-    private fun loadTestBannerAd() {
-        runOnUiThread {
-            try {
-                val parent = adView?.parent as? LinearLayout ?: return@runOnUiThread
-                val index = parent.indexOfChild(adView)
-                parent.removeView(adView)
-                adView?.destroy()
-
-                adView = AdView(this).apply {
-                    adUnitId = testBannerAdUnitId
-                    setAdSize(AdSize.BANNER)
-                    visibility = View.VISIBLE
-                    adListener = object : AdListener() {
-                        override fun onAdLoaded() {
-                            Log.d("AdMob", "Test Banner Ad loaded successfully!")
+            connectivityManager?.registerNetworkCallback(networkRequest, object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    Log.d("AdMob", "Internet connection active! Loading banner and rewarded ads...")
+                    runOnUiThread {
+                        if (!isBannerLoaded && !isBannerLoading) {
+                            loadBannerAd()
                         }
-                        override fun onAdFailedToLoad(error: LoadAdError) {
-                            Log.e("AdMob", "Test Banner failed to load: ${error.message}")
+                        if (rewardedAd == null && !isLoadingRewarded) {
+                            loadRewardedAd()
                         }
                     }
                 }
-                parent.addView(adView, index, LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                ))
+            })
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error in setupNetworkMonitoring", e)
+        }
+    }
+
+    private fun loadBannerAd() {
+        // If already successfully loaded, keep it persistent and fixed across all screens!
+        if (isBannerLoaded && adView != null) {
+            bannerContainer?.visibility = View.VISIBLE
+            return
+        }
+        if (isBannerLoading) return
+        if (liveBannerAdUnitId.isBlank()) return
+
+        runOnUiThread {
+            try {
+                isBannerLoading = true
+                bannerContainer?.visibility = View.VISIBLE
+
+                // Remove and cleanly destroy any previously failed or outdated AdView
+                if (adView != null) {
+                    try {
+                        bannerContainer?.removeAllViews()
+                        adView?.destroy()
+                    } catch (e: Exception) {
+                        Log.e("AdMob", "Error releasing old AdView", e)
+                    }
+                    adView = null
+                }
+
+                val newAdView = AdView(this).apply {
+                    adUnitId = liveBannerAdUnitId
+                    setAdSize(AdSize.BANNER)
+                    adListener = object : AdListener() {
+                        override fun onAdLoaded() {
+                            isBannerLoaded = true
+                            isBannerLoading = false
+                            Log.d("AdMob", "Persistent Banner Ad loaded successfully! ($liveBannerAdUnitId)")
+                            bannerContainer?.visibility = View.VISIBLE
+                        }
+                        override fun onAdFailedToLoad(error: LoadAdError) {
+                            isBannerLoading = false
+                            isBannerLoaded = false
+                            Log.w("AdMob", "Banner failed ($liveBannerAdUnitId): code=${error.code}, message=${error.message}")
+                            bannerContainer?.postDelayed({
+                                if (!isBannerLoaded) {
+                                    loadBannerAd()
+                                }
+                            }, 30000)
+                        }
+                    }
+                }
+                adView = newAdView
+
+                val params = android.widget.FrameLayout.LayoutParams(
+                    android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
+                    android.widget.FrameLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = android.view.Gravity.CENTER
+                }
+                bannerContainer?.addView(newAdView, params)
+
                 val adRequest = AdRequest.Builder().build()
-                adView?.loadAd(adRequest)
+                newAdView.loadAd(adRequest)
             } catch (e: Exception) {
-                Log.e("AdMob", "Error switching to test banner", e)
+                isBannerLoading = false
+                Log.e("AdMob", "Exception loading banner ad", e)
             }
         }
     }
 
     private var isLoadingRewarded = false
 
-    private fun loadRewardedAd(useTestUnit: Boolean = false, onLoaded: (() -> Unit)? = null) {
+    private fun loadRewardedAd(onLoaded: (() -> Unit)? = null) {
         if (rewardedAd != null) {
             onLoaded?.invoke()
             return
         }
         if (isLoadingRewarded) return
+        if (liveRewardedAdUnitId.isBlank()) return
 
-        val targetUnitId = if (useTestUnit) testRewardedAdUnitId else liveRewardedAdUnitId
         isLoadingRewarded = true
-        Log.d("AdMob", "Loading Rewarded Ad: $targetUnitId (useTestUnit=$useTestUnit)")
+        Log.d("AdMob", "Loading Rewarded Ad: $liveRewardedAdUnitId")
         val adRequest = AdRequest.Builder().build()
-        RewardedAd.load(this, targetUnitId, adRequest, object : RewardedAdLoadCallback() {
+        RewardedAd.load(this, liveRewardedAdUnitId, adRequest, object : RewardedAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 isLoadingRewarded = false
                 rewardedAd = null
-                Log.w("AdMob", "Rewarded Ad failed ($targetUnitId): code=${adError.code}, msg=${adError.message}")
-
-                if (!useTestUnit) {
-                    Log.d("AdMob", "Live unit unavailable (app unreleased or new unit). Retrying with Google Test Rewarded Ad...")
-                    runOnUiThread {
-                        loadRewardedAd(useTestUnit = true, onLoaded = onLoaded)
-                    }
-                } else {
-                    onLoaded?.invoke()
-                }
+                Log.w("AdMob", "Live Rewarded Ad failed ($liveRewardedAdUnitId): code=${adError.code}, msg=${adError.message}")
+                onLoaded?.invoke()
             }
 
             override fun onAdLoaded(ad: RewardedAd) {
                 isLoadingRewarded = false
                 rewardedAd = ad
-                Log.d("AdMob", "Rewarded Ad loaded successfully! (Unit: $targetUnitId)")
-                ad.fullScreenContentCallback = object : FullScreenContentCallback() {
-                    override fun onAdDismissedFullScreenContent() {
-                        Log.d("AdMob", "Rewarded Ad dismissed")
-                        rewardedAd = null
-                        loadRewardedAd(useTestUnit = false)
-                    }
-                    override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                        Log.e("AdMob", "Rewarded Ad failed to show: ${adError.message}")
-                        rewardedAd = null
-                        loadRewardedAd(useTestUnit = false)
-                    }
-                }
+                Log.d("AdMob", "Rewarded Ad loaded successfully!")
+                setupRewardedCallbacks(ad)
                 onLoaded?.invoke()
             }
         })
     }
 
+    private fun setupRewardedCallbacks(ad: RewardedAd) {
+        ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+            override fun onAdDismissedFullScreenContent() {
+                Log.d("AdMob", "Rewarded Ad dismissed. Reward earned: $isRewardEarnedForCurrentAd")
+                if (!isRewardEarnedForCurrentAd) {
+                    runOnUiThread {
+                        Toast.makeText(this@MainActivity, "تم إغلاق الإعلان قبل اكتماله، لم يتم منح المكافأة.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                rewardedAd = null
+                isRewardEarnedForCurrentAd = false
+                loadRewardedAd()
+            }
+
+            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                Log.e("AdMob", "Rewarded Ad failed to show: ${adError.message}")
+                rewardedAd = null
+                isRewardEarnedForCurrentAd = false
+                runOnUiThread {
+                    Toast.makeText(this@MainActivity, "تعذر عرض الإعلان! يرجى المحاولة لاحقاً.", Toast.LENGTH_SHORT).show()
+                }
+                loadRewardedAd()
+            }
+        }
+    }
+
     fun showRewardedAd(rewardType: String) {
         runOnUiThread {
+            isRewardEarnedForCurrentAd = false
+
             if (rewardedAd != null) {
-                rewardedAd?.show(this, OnUserEarnedRewardListener {
-                    webView.evaluateJavascript(
-                        "if (window.onRewardedAdEarned) { window.onRewardedAdEarned('$rewardType'); }",
-                        null
-                    )
+                rewardedAd?.show(this, OnUserEarnedRewardListener { rewardItem ->
+                    isRewardEarnedForCurrentAd = true
+                    Log.d("AdMob", "User completed ad and earned reward: ${rewardItem.amount} for $rewardType")
+                    runOnUiThread {
+                        webView.evaluateJavascript(
+                            "if (window.onRewardedAdEarned) { window.onRewardedAdEarned('$rewardType'); }",
+                            null
+                        )
+                    }
                 })
             } else {
                 Toast.makeText(this, "جاري تحضير الإعلان، ثانية واحدة...", Toast.LENGTH_SHORT).show()
-                loadRewardedAd(useTestUnit = true) {
+                loadRewardedAd {
                     runOnUiThread {
                         if (rewardedAd != null) {
-                            rewardedAd?.show(this@MainActivity, OnUserEarnedRewardListener {
-                                webView.evaluateJavascript(
-                                    "if (window.onRewardedAdEarned) { window.onRewardedAdEarned('$rewardType'); }",
-                                    null
-                                )
+                            rewardedAd?.show(this@MainActivity, OnUserEarnedRewardListener { rewardItem ->
+                                isRewardEarnedForCurrentAd = true
+                                Log.d("AdMob", "User completed ad and earned reward: ${rewardItem.amount} for $rewardType")
+                                runOnUiThread {
+                                    webView.evaluateJavascript(
+                                        "if (window.onRewardedAdEarned) { window.onRewardedAdEarned('$rewardType'); }",
+                                        null
+                                    )
+                                }
                             })
                         } else {
-                            // If ad genuinely cannot load (no internet), grant reward so player is not blocked
-                            Toast.makeText(this@MainActivity, "تم منح المكافأة لعدم توفر إعلان حالياً", Toast.LENGTH_SHORT).show()
-                            webView.evaluateJavascript(
-                                "if (window.onRewardedAdEarned) { window.onRewardedAdEarned('$rewardType'); }",
-                                null
-                            )
+                            // STRICT REQUIREMENT: NEVER GIVE REWARD IF AD WAS NOT WATCHED!
+                            Toast.makeText(
+                                this@MainActivity,
+                                "تعذر تحميل الإعلان! تأكد من اتصالك بالإنترنت. (لم يتم منح أي مكافأة)",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 }
@@ -390,8 +466,8 @@ class MainActivity : AppCompatActivity() {
         @JavascriptInterface
         fun setBannerVisible(visible: Boolean) {
             runOnUiThread {
-                adView?.visibility = if (visible) View.VISIBLE else View.GONE
-                if (visible) {
+                bannerContainer?.visibility = if (visible) View.VISIBLE else View.GONE
+                if (visible && !isBannerLoaded && !isBannerLoading) {
                     loadBannerAd()
                 }
             }
@@ -415,6 +491,21 @@ class MainActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     Log.e("MainActivity", "Error sharing text", e)
                 }
+            }
+        }
+
+        @JavascriptInterface
+        fun getDeviceLanguage(): String {
+            return try {
+                val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    resources.configuration.locales.get(0)
+                } else {
+                    @Suppress("DEPRECATION")
+                    resources.configuration.locale
+                }
+                locale.language ?: "ar"
+            } catch (e: Exception) {
+                "ar"
             }
         }
     }
